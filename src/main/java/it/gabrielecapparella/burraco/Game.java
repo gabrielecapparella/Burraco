@@ -20,8 +20,8 @@ public class Game {
 		this.id = id;
 		this.targetPoints = targetPoints;
 		this.seatsToAssign = numPlayers;
-		Team team1 = new Team();
-		Team team2 = new Team();
+		this.team1 = new Team();
+		this.team2 = new Team();
 
 		this.players = new ArrayList<>(numPlayers);
 		this.players.add(new Player(this, team1));
@@ -35,8 +35,8 @@ public class Game {
 	private void setupTable() {
 		this.initDeck();
 
-		this.team1.setPot(new CardSet(this.drawCards(11)));
-		this.team2.setPot(new CardSet(this.drawCards(11)));
+		this.team1.newRound(new CardSet(this.drawCards(11)));
+		this.team2.newRound(new CardSet(this.drawCards(11)));
 
 		for (Player p: this.players) {
 			p.setHand(new CardSet(this.drawCards(11)));
@@ -60,7 +60,7 @@ public class Game {
 		}
 	}
 
-	public Player join(PlayerSession player) {
+	public Player join() {
 		if (this.seatsToAssign==0) return null;
 		this.seatsToAssign -= 1;
 		Player justJoined = this.players.get(this.seatsToAssign);
@@ -83,8 +83,7 @@ public class Game {
 	public void discard(Player p, Card c) {
 		this.discardPile.add(c);
 		int next = (this.players.indexOf(p)+1) % this.players.size();
-		PlayerSession.broadcast(this.id,
-				new Message(MsgType.TURN, "Game", String.valueOf(next)));
+		PlayerSession.broadcast(this.id, new Message(MsgType.TURN, "Game", String.valueOf(next)));
 	}
 
 	public List<Card> pickDiscardPile() { // TODO: test
@@ -94,6 +93,16 @@ public class Game {
 	}
 
 	public void closeRound() {
-		//TODO
+		for (Player p: this.players) {
+			p.payHandPoints();
+		}
+		int p1 = this.team1.countRoundPoints();
+		int p2 = this.team2.countRoundPoints();
+		if ((p1>=this.targetPoints || p2>=this.targetPoints) && p1!=p2) { // someone won
+			PlayerSession.broadcast(this.id, new Message(MsgType.END_GAME, "Game", p1+","+p2));
+		} else {
+			PlayerSession.broadcast(this.id, new Message(MsgType.END_ROUND, "Game", p1+","+p2));
+			this.setupTable();
+		}
 	}
 }

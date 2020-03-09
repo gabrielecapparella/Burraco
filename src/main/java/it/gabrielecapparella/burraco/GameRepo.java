@@ -19,8 +19,8 @@ public class GameRepo {
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
-    public String createGame(String params) {
-        // TODO
+    public String createGame(String params) {// TODO
+
         //if (!(numPlayers==2 || numPlayers==4)) throw new Exception("Only 2 or 4 players supported.");
         return "New game endpoint";
     }
@@ -41,8 +41,8 @@ public class GameRepo {
     @DELETE
     @Path("{gameId}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteGameById(@PathParam("gameId") int gameId) {
-        // TODO
+    public String deleteGameById(@PathParam("gameId") int gameId) {// TODO
+
         return "Delete Specific game "+gameId;
     }
 

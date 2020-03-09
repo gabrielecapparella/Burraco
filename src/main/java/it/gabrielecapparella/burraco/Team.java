@@ -1,14 +1,14 @@
 package it.gabrielecapparella.burraco;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-	private List<Integer> pointsHistory;
 	private CardSet pot;
 	private List<CardSet> runs;
-	private int points; // will be put inside pointsHistory
 	public boolean potTaken = false;
 	public boolean canClose = false; // TODO
+	public int points = 0;
 
 	public boolean meld(CardSet cards, int runIndex) {
 		if (runIndex<0) {
@@ -21,13 +21,12 @@ public class Team {
 
 	private void addRun(CardSet newRun) {
 		this.runs.add(newRun);
-		this.points += this.countRunPoints(newRun);
 	}
 
 	private boolean increaseRun(CardSet additionalCards, int runIndex) {
 		try {
 			CardSet newRun = this.runs.get(runIndex);
-			newRun.cards.addAll(additionalCards.cards);
+			newRun.addAll(additionalCards);
 			if (newRun.checkIfLegitRun()) {
 				this.runs.set(runIndex, newRun);
 				return true;
@@ -38,12 +37,19 @@ public class Team {
 		}
 	}
 
-	private int countRunPoints(CardSet run) {
-		return 0; // TODO
+	public int countRoundPoints() {
+		for (CardSet run: this.runs) {
+			this.points += run.countPoints();
+		}
+		if (!this.potTaken) this.points -= 100;
+		return this.points;
 	}
 
-	public void setPot(CardSet pot) {
+	public void newRound(CardSet pot) {
+		this.runs = new ArrayList<>();
 		this.pot = pot;
+		this.potTaken = false;
+		this.canClose = false;
 	}
 
 	public CardSet getPot() {

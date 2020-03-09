@@ -25,7 +25,7 @@ public class PlayerSession {
 		if (this.game == null) {
 			// TODO something bad
 		}
-		this.player = this.game.join(this);
+		this.player = this.game.join();
 		if (this.player == null) {
 			// TODO something bad
 		}
@@ -36,9 +36,9 @@ public class PlayerSession {
 	}
 
 	@OnClose
-	public void onClose(@PathParam("gameId") Integer gameId, Session session) {
+	public void onClose(@PathParam("gameId") Integer gameId, Session session) { // TODO
 		System.out.println("onClose::" +  session.getId());
-		// TODO
+
 	}
 
 	@OnMessage
@@ -92,8 +92,7 @@ public class PlayerSession {
 					this.sendMsg(session, new Message(MsgType.DISCARD, "PlayerSession", dRet.name()));
 				}
 				break;
-			case EXIT:
-				// TODO
+			case EXIT:// TODO
 				break;
 		}
 
@@ -101,8 +100,7 @@ public class PlayerSession {
 	}
 
 	@OnError
-	public void onError(Throwable t) {
-		// TODO
+	public void onError(Throwable t) {// TODO
 		System.out.println("onError::" + t.getMessage());
 	}
 
@@ -120,7 +118,7 @@ public class PlayerSession {
 				try {
 					s.getBasicRemote().sendObject(msg);
 				} catch (IOException | EncodeException e) {
-					// TODO do something
+					e.printStackTrace();
 				}
 			}
 		}

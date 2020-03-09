@@ -3,32 +3,41 @@ package it.gabrielecapparella.burraco;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardSet { // TODO consider extending ArrayList
-    public List<Card> cards;
+public class CardSet extends ArrayList<Card>{
+
+    public CardSet() {
+        super();
+    }
 
     public CardSet(List<Card> cards) {
-        this.cards = new ArrayList<>(cards);
+        super(cards);
     }
 
     public CardSet(String cards) {
-        this.cards = new ArrayList<>();
         for (String v: cards.split(",")) {
-            this.cards.add(new Card(v));
+            super.add(new Card(v));
         }
     }
 
-    public boolean checkIfLegitRun() {
-        return true; // TODO
+    public boolean checkIfLegitRun() {// TODO
+        return true;
+    }
+
+    public int countPoints() {
+        int points = 0;
+        for (Card c: this) {
+            points += c.value;
+        }
+        return points;
     }
 
     @Override
     public String toString() {
-        String result = "";
-        for (Card c: this.cards) {
-            result += c.toString()+",";
+        StringBuilder result = new StringBuilder();
+        for (Card c: this) {
+            result.append(c.toString());
+            result.append(",");
         }
-        return result;
+        return result.toString();
     }
-
-    // TODO
 }
