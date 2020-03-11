@@ -31,7 +31,7 @@ public class Player {
 		for (Card c: cs) {
 			if (!this.hand.contains(c)) return MeldRet.NOT_IN_HAND;
 		}
-		if (runIndex<0 && !cs.checkIfLegitRun()) return MeldRet.NOT_LEGIT;
+		if (runIndex<0 && !cs.isLegitRun()) return MeldRet.NOT_LEGIT;
 		boolean willPot = cs.size()==this.hand.size();
 		if(willPot && this.team.potTaken) return MeldRet.CANNOT_POT;
 

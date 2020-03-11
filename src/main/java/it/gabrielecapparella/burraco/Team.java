@@ -27,7 +27,7 @@ public class Team {
 		try {
 			CardSet newRun = this.runs.get(runIndex);
 			newRun.addAll(additionalCards);
-			if (newRun.checkIfLegitRun()) {
+			if (newRun.isLegitRun()) {
 				this.runs.set(runIndex, newRun);
 				return true;
 			}
