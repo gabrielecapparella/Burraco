@@ -18,7 +18,7 @@ public class Card implements Comparable<Card> {
 		String[] v = s.split("\\|");
 		this.num = Integer.parseInt(v[0]);
 		this.suit = Suits.valueOf(v[1]);
-		if (!s.equals("0|J") || (num>0 && num<14)) throw new IllegalArgumentException("Invalid number.");
+		if (!s.equals("0|J") && (num<0 || num>13)) throw new IllegalArgumentException("Invalid number.");
 		this.wildcard = (this.num==0 || this.num==2);
 		this.points = this.getPoints();
 	}
