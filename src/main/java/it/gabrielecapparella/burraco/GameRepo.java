@@ -21,7 +21,7 @@ public class GameRepo {
     @Produces(MediaType.TEXT_PLAIN)
     public String createGame(String params) {// TODO
 
-        //if (!(numPlayers==2 || numPlayers==4)) throw new Exception("Only 2 or 4 players supported.");
+
         return "New game endpoint";
     }
 

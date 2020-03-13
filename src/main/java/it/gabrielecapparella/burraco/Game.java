@@ -1,6 +1,7 @@
 package it.gabrielecapparella.burraco;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -15,6 +16,8 @@ public class Game {
 	private List<Card> deck;
 	private List<Card> discardPile;
 	// private openTimestamp to auto-close it if too much old TODO
+
+	public Game() {}
 
 	public Game(int id, int targetPoints, int numPlayers) {
 		this.id = id;
@@ -58,6 +61,7 @@ public class Game {
 				for(int i = 1; i<=13; i++) this.deck.add(new Card(i, s));
 			}
 		}
+		Collections.shuffle(this.deck);
 	}
 
 	public Player join() {
@@ -68,7 +72,7 @@ public class Game {
 		return justJoined;
 	}
 
-	public List<Card> drawCards(int howMany) { // TODO: test
+	public List<Card> drawCards(int howMany) {
 		List<Card> cards;
 		try {
 			List<Card> sublist = this.deck.subList(0, howMany);
@@ -86,7 +90,7 @@ public class Game {
 		PlayerSession.broadcast(this.id, new Message(MsgType.TURN, "Game", String.valueOf(next)));
 	}
 
-	public List<Card> pickDiscardPile() { // TODO: test
+	public List<Card> pickDiscardPile() {
 		List<Card> picked = new ArrayList<>(this.discardPile);
 		this.discardPile.clear();
 		return picked;

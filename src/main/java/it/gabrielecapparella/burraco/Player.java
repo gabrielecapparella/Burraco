@@ -48,7 +48,7 @@ public class Player {
 	public DiscardRet discard(Card c) {
 		if (!this.hand.contains(c)) return DiscardRet.NOT_IN_HAND;
 		boolean willEmpty = this.hand.size()==1;
-		if (willEmpty && this.team.potTaken && !this.team.canClose) return DiscardRet.CANNOT_CLOSE;
+		if (willEmpty && (!this.team.canClose() || c.wildcard)) return DiscardRet.CANNOT_CLOSE;
 
 		this.hand.remove(c);
 		this.game.discard(this, c);
@@ -57,14 +57,14 @@ public class Player {
 		if (willEmpty && !this.team.potTaken) {
 			this.hand = this.team.getPot();
 			return DiscardRet.POT;
-		} else if (willEmpty && this.team.canClose){// should not be a jolly/pinella
+		} else if (willEmpty && this.team.canClose()){
 			this.team.points += 100;
 			return DiscardRet.CLOSE;
 		}
 		return DiscardRet.OK;
 	}
 
-	public void payHandPoints() { // TODO
+	public void payHandPoints() {
 		this.team.points -= this.hand.countPoints();
 	}
 

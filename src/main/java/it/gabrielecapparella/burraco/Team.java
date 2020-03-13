@@ -7,8 +7,15 @@ public class Team {
 	private CardSet pot;
 	private List<CardSet> runs;
 	public boolean potTaken = false;
-	public boolean canClose = false; // TODO
 	public int points = 0;
+
+	public boolean canClose() {
+		if (!potTaken) return false;
+		for (CardSet r: this.runs) {
+			if (r.size()>=7) return true;
+		}
+		return false;
+	}
 
 	public boolean meld(CardSet cards, int runIndex) {
 		if (runIndex<0) {
@@ -49,7 +56,6 @@ public class Team {
 		this.runs = new ArrayList<>();
 		this.pot = pot;
 		this.potTaken = false;
-		this.canClose = false;
 	}
 
 	public CardSet getPot() {

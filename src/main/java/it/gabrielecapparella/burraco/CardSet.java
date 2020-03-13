@@ -108,9 +108,36 @@ public class CardSet extends ArrayList<Card>{
 
 	public int countPoints() {
 		int points = 0;
-		for (Card c: this) {
-			points += c.value;
+		int numCards = this.size();
+		for (Card c : this) {
+			points += c.points;
 		}
+		if (numCards >= 7) {
+			Collections.sort(this);
+			if (this.inferType() == RunType.GROUP) {
+				if (get(0).num == last().num) return (points + 200);
+				if (get(0).wildcard && numCards > 7) return (points + 150);
+				return (points + 100);
+			} else { // SEQUENCE
+				if (!(get(0).wildcard)) return (points + 200);
+				int adjCards = 1;
+				for (int i = numCards - 1; i > 0; i--) {
+					if (get(i).num - get(i-1).num == 1) { // consecutive
+						adjCards += 1;
+					} else { //TODO
+						if (get(i).num == 3) { // 3,2,1
+
+						} else if (get(i-1).num == 1) { // 1 over K
+
+						} else { // wildcard
+
+						}
+					}
+				}
+
+			}
+		}
+
 		return points;
 	}
 
