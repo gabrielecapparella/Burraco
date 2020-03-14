@@ -1,5 +1,8 @@
 package it.gabrielecapparella.burraco;
 
+import org.json.JSONObject;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,22 +10,25 @@ import java.util.Random;
 
 
 public class Game {
-	private int id;
+	private String id;
+	private Instant startTime;
 	private int targetPoints;
 	private int seatsToAssign;
+	public boolean isRunning;
 	private Team team1;
 	private Team team2;
 	private List<Player> players;
 	private List<Card> deck;
 	private List<Card> discardPile;
-	// private openTimestamp to auto-close it if too much old TODO
 
 	public Game() {}
 
-	public Game(int id, int targetPoints, int numPlayers) {
+	public Game(String id, int targetPoints, int numPlayers) {
 		this.id = id;
+		this.startTime = Instant.now();
 		this.targetPoints = targetPoints;
 		this.seatsToAssign = numPlayers;
+		this.isRunning = false;
 		this.team1 = new Team();
 		this.team2 = new Team();
 
@@ -50,6 +56,7 @@ public class Game {
 		int whoBegins = new Random().nextInt(this.players.size());
 		PlayerSession.broadcast(this.id,
 				new Message(MsgType.TURN, "Game", String.valueOf(whoBegins)));
+		this.isRunning = true;
 	}
 
 	private void initDeck() {
@@ -108,5 +115,23 @@ public class Game {
 			PlayerSession.broadcast(this.id, new Message(MsgType.END_ROUND, "Game", p1+","+p2));
 			this.setupTable();
 		}
+	}
+
+	public void closeGame() {
+		this.isRunning = false;
+		int p1 = this.team1.points;
+		int p2 = this.team2.points;
+		PlayerSession.broadcast(this.id, new Message(MsgType.END_GAME, "Game", p1+","+p2));
+	}
+
+	public JSONObject getDescription() {
+		JSONObject jo = new JSONObject();
+		jo.put("id", this.id);
+		jo.put("timestamp", this.startTime);
+		jo.put("targetPoints", this.targetPoints);
+		jo.put("numPlayers", this.players.size());
+		jo.put("seatsToAssign", this.seatsToAssign);
+		jo.put("isRunning", this.isRunning);
+		return jo;
 	}
 }

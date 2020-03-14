@@ -18,7 +18,7 @@ public class PlayerSession {
 	private String name;
 
 	@OnOpen
-	public void onOpen(@PathParam("gameId") Integer gameId, Session session) {
+	public void onOpen(@PathParam("gameId") String gameId, Session session) {
 		System.out.println("onOpen:" + session.getId());
 
 		this.game = Games.getGameById(gameId);
@@ -42,7 +42,7 @@ public class PlayerSession {
 	}
 
 	@OnMessage
-	public void onMessage(@PathParam("gameId") Integer gameId, Message msg, Session session) {
+	public void onMessage(@PathParam("gameId") String gameId, Message msg, Session session) {
 		String pot;
 		switch (msg.type) {
 			case DRAW:
@@ -112,7 +112,7 @@ public class PlayerSession {
 		}
 	}
 
-	public static void broadcast(Integer gameId, Message msg) {
+	public static void broadcast(String gameId, Message msg) {
 		for (Session s: sessions) {
 			if (s.getUserProperties().get("gameId")==gameId) {
 				try {

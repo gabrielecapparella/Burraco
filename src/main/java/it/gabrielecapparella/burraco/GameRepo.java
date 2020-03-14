@@ -1,49 +1,64 @@
 package it.gabrielecapparella.burraco;
 
-import com.sun.jersey.spi.resource.Singleton;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
+import javax.ws.rs.core.Response;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
 @Path("/games")
 public class GameRepo {
-    private static Map<Integer, Game> id2game = new HashMap<>();
+    private static Map<String, Game> id2game = new ConcurrentHashMap<>();
     private static GameRepo instance;
 
     public GameRepo() {
         instance = this;
+        GameInfo info = new GameInfo();
+        info.setNumPlayers(2);
+        info.setTargetPoints(2005);
+        String id = createGame(info);
+        System.out.println(id);
     }
 
     @POST
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String createGame(String params) {// TODO
+    public String createGame(GameInfo info) {
+        // in: howManyPlayers, targetPoints, (turnTimeout)
+        if (!info.validateParams()) return "nope";
+        String gameId = UUID.randomUUID().toString();
+        id2game.put(gameId, new Game(gameId, info.targetPoints, info.numPlayers));
 
-
-        return "New game endpoint";
+        return "/game/"+gameId;
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public String getGames() {
-        // TODO should output ids and description
-        return "Games list";
+        JSONArray ja = new JSONArray();
+        for (Game game : id2game.values()) {
+            ja.put(game.getDescription());
+        }
+        return ja.toString();
     }
 
-    @GET
-    @Path("{gameId}")
-    public Game getGameById(@PathParam("gameId") int gameId) {
+    //@GET
+    //@Path("{gameId}")
+    public Game getGameById(String gameId) {
         return id2game.get(gameId);
     }
 
     @DELETE
     @Path("{gameId}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String deleteGameById(@PathParam("gameId") int gameId) {// TODO
-
-        return "Delete Specific game "+gameId;
+    public Response deleteGameById(@PathParam("gameId") String gameId) {
+        Game game = id2game.get(gameId);
+        if (game==null) return Response.status(404).build();
+        game.closeGame();
+        return Response.status(200).build();
     }
 
     public static GameRepo getInstance() {
