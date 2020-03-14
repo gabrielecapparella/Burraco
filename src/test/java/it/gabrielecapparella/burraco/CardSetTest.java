@@ -62,4 +62,60 @@ class CardSetTest {
 		assertTrue((new CardSet("1|D,2|D,2|S").isLegitRun()));
 	}
 
+	@Test
+	void countPoints() {
+		CardSet cs;
+		cs = new CardSet("3|D,4|D,5|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(15, cs.countPoints());
+
+		cs = new CardSet("1|D,12|D,13|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(35, cs.countPoints());
+
+		cs = new CardSet("1|D,2|H,13|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(45, cs.countPoints());
+
+		cs = new CardSet("1|D,2|D,3|D,4|D,5|D,6|D,7|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(260, cs.countPoints());
+
+		cs = new CardSet("1|D,2|H,3|D,4|D,5|D,6|D,7|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(160, cs.countPoints());
+
+		cs = new CardSet("1|D,2|H,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(230, cs.countPoints());
+
+		cs = new CardSet("1|D,2|D,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(280, cs.countPoints());
+
+		cs = new CardSet("1|D,2|D,3|D,4|D,5|D,0|J,7|D,8|D,9|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(205, cs.countPoints());
+
+		cs = new CardSet("2|D,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(265, cs.countPoints());
+
+		cs = new CardSet("2|H,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(215, cs.countPoints());
+
+		cs = new CardSet("2|D,8|D,9|D,10|D,11|D,12|D,13|D,1|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(245, cs.countPoints());
+
+		cs = new CardSet("2|D,9|D,10|D,11|D,12|D,13|D,1|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(185, cs.countPoints());
+
+		cs = new CardSet("8|D,9|D,10|D,11|D,2|D,13|D,1|D");
+		assertTrue(cs.isLegitRun());
+		assertEquals(185, cs.countPoints());
+	}
+
 }

@@ -6,6 +6,9 @@ import java.util.List;
 
 public class CardSet extends ArrayList<Card>{
 
+	private BuracoType burType;
+	private RunType runType;
+
 	public CardSet() {
 		super();
 	}
@@ -21,13 +24,20 @@ public class CardSet extends ArrayList<Card>{
 	}
 
 	public boolean isLegitRun() {
-		Collections.sort(this);
+		int numCard = super.size();
+		boolean isLegit;
 		if (super.size()<3) return false;
-		if (get(0).num==0 && get(1).num==0) return false; // two jokers
-		RunType type = this.inferType();
+		Collections.sort(this);
 
-		if(type==RunType.GROUP) return this.isLegitGroup();
-		else return this.isLegitSequence();
+		if (get(0).num==0 && get(1).num==0) return false; // two jokers
+
+		this.runType = this.inferType();
+		if(this.runType==RunType.GROUP) return isLegit = this.isLegitGroup();
+		else isLegit = this.isLegitSequence();
+
+		if (isLegit) this.burType = this.getBuracoType();
+
+		return isLegit;
 	}
 
 	private RunType inferType() {
@@ -65,9 +75,8 @@ public class CardSet extends ArrayList<Card>{
 			else run[curr.num] = curr;
 		}
 
-		//if (run[3]==null && run[2]!=null && run[0]!=null) return false;
-		if (run[1]!=null && run[2]==null && run[3]==null) { // single ace over K
-			run[14] = run[1]; // move ace on top of K
+		if (run[1]!=null && !(run[2]!=null && run[0]!=null) && run[3]==null){ // single ace over K
+			run[14] = run[1];
 			run[1] = null;
 		}
 		boolean usedWild = false;
@@ -77,8 +86,8 @@ public class CardSet extends ArrayList<Card>{
 					run[i] = run[0];
 					run[0] = null;
 					usedWild = true;
-				} else if (run[2]!=null) {
-					if (usedWild) return false; // two free wildcards
+				} else if (i!=1 && run[2]!=null) {
+					if (usedWild) return false; // two missing cards
 					run[i] = run[2];
 					run[2] = null;
 				}
@@ -107,28 +116,26 @@ public class CardSet extends ArrayList<Card>{
 		for (Card c : this) {
 			points += c.points;
 		}
-		if (this.size() >= 7) {
-			switch (this.getBuracoType()) {
-				case DIRTY:
-					points += 100;
-				case SEMICLEAN:
-					points += 150;
-				case CLEAN:
-					points += 200;
-			}
-		}
+
+		if (this.burType==BuracoType.DIRTY) points += 100;
+		else if (this.burType==BuracoType.SEMICLEAN) points += 150;
+		else if (this.burType==BuracoType.CLEAN) points += 200;
+
 		return points;
 	}
 
-	private BuracoType getBuracoType() { // TODO test
+	private BuracoType getBuracoType() {
+		if (super.size()<7) return BuracoType.NONE;
 		int adjCards = 1;
-		int numCards = super.size();
-		for (int i=numCards-2; i>=0; i--) {
-			if (!get(i).wildcard) {
+		Card curr;
+		for (int i=super.size()-2; i>=0; i--) {
+			curr = super.get(i);
+			if (!curr.wildcard || (curr.num==2 && get(i+1).num==3 && curr.suit==get(i+1).suit)) {
 				adjCards += 1;
 			} else if (adjCards>=7 || i>=7) {
 				return BuracoType.SEMICLEAN;
 			} else {
+				if (get(0).num==1 && last().num==13 && (adjCards+1)>=7) return BuracoType.SEMICLEAN;
 				return BuracoType.DIRTY;
 			}
 		}
