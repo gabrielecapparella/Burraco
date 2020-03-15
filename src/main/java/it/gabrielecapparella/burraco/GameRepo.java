@@ -1,7 +1,6 @@
 package it.gabrielecapparella.burraco;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -10,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
-@Path("/games")
+@Path("/gamerepo")
 public class GameRepo {
     private static Map<String, Game> id2game = new ConcurrentHashMap<>();
     private static GameRepo instance;
