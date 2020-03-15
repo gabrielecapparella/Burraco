@@ -1,6 +1,7 @@
 package it.gabrielecapparella.burraco;
 
 import javax.websocket.*;
+import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -18,27 +19,21 @@ public class PlayerSession {
 	private String name;
 
 	@OnOpen
-	public void onOpen(@PathParam("gameId") String gameId, Session session) {
+	public void onOpen(@PathParam("gameId") String gameId, Session session) throws IOException {
 		System.out.println("onOpen:" + session.getId());
 
 		this.game = Games.getGameById(gameId);
-		if (this.game == null) {
-			// TODO something bad
+		if(this.game==null) {
+			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game doesn't exist"));
+		} else if (this.game.isRunning) {
+			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game already running"));
 		}
 		this.player = this.game.join();
-		if (this.player == null) {
-			// TODO something bad
-		}
+
 		sessions.add(session);
 		session.getUserProperties().put("gameId", gameId); // used during broadcast
 		this.name = session.getId();
 		broadcast(gameId, new Message(MsgType.JOIN, this.name, null));
-	}
-
-	@OnClose
-	public void onClose(@PathParam("gameId") Integer gameId, Session session) { // TODO
-		System.out.println("onClose::" +  session.getId());
-
 	}
 
 	@OnMessage
@@ -92,7 +87,7 @@ public class PlayerSession {
 					this.sendMsg(session, new Message(MsgType.DISCARD, "PlayerSession", dRet.name()));
 				}
 				break;
-			case EXIT:// TODO
+			case EXIT:// TODO may use onClose instead
 				break;
 		}
 
@@ -100,8 +95,18 @@ public class PlayerSession {
 	}
 
 	@OnError
-	public void onError(Throwable t) {// TODO
+	public void onError(Throwable t) {
 		System.out.println("onError::" + t.getMessage());
+		t.printStackTrace();
+		//The onerror event is fired when something wrong occurs between the communications.
+		// The event onerror is followed by a connection termination, which is a close event.
+	}
+
+	@OnClose
+	public void onClose(Session session, CloseReason cReason) { // TODO
+		System.out.println("onClose::" +  session.getId());
+		System.out.println("closeReason::" +cReason.toString());
+
 	}
 
 	public void sendMsg(Session session, Message msg) {
