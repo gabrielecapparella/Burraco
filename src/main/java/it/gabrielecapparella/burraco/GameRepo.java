@@ -29,7 +29,8 @@ public class GameRepo {
     public String createGame(GameInfo info) {
         // in: howManyPlayers, targetPoints, (turnTimeout)
         if (!info.validateParams()) return "nope";
-        String gameId = UUID.randomUUID().toString();
+        //String gameId = UUID.randomUUID().toString();
+        String gameId = "carbonara";
         id2game.put(gameId, new Game(gameId, info.targetPoints, info.numPlayers));
 
         return "/game/"+gameId;

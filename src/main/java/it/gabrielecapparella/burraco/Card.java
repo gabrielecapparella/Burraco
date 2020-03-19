@@ -9,7 +9,7 @@ public class Card implements Comparable<Card> {
 	public Card(int n, Suits s) {
 		this.num = n;
 		this.suit = s;
-		if ((n==0 && s==Suits.J) || (n>0 && n<14)) throw new IllegalArgumentException("Invalid number.");
+		if (!(n==0 && s==Suits.J) && (n<1 || n>13)) throw new IllegalArgumentException("Invalid number.");
 		this.wildcard = (this.num==0 || this.num==2);
 		this.points = this.getPoints();
 	}

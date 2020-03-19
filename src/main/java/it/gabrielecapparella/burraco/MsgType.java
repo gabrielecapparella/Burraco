@@ -8,6 +8,7 @@ public enum MsgType {
 	PICK,
 	MELD,
 	DISCARD,
+	POT,
 	EXIT,
 	END_ROUND,
 	END_GAME,

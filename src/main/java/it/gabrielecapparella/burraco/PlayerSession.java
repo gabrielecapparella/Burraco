@@ -5,18 +5,15 @@ import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @ServerEndpoint(value = "/game/{gameId}",
 		decoders = MsgDecoder.class,
 		encoders = MsgEncoder.class )
 public class PlayerSession {
-	private static List<Session> sessions = new CopyOnWriteArrayList<>();
 	private static GameRepo Games = GameRepo.getInstance();
 	private Game game;
 	private Player player;
-	private String name;
+	private Session session;
 
 	@OnOpen
 	public void onOpen(@PathParam("gameId") String gameId, Session session) throws IOException {
@@ -28,70 +25,33 @@ public class PlayerSession {
 		} else if (this.game.isRunning) {
 			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game already running"));
 		}
-		this.player = this.game.join();
-
-		sessions.add(session);
-		session.getUserProperties().put("gameId", gameId); // used during broadcast
-		this.name = session.getId();
-		broadcast(gameId, new Message(MsgType.JOIN, this.name, null));
+		this.session = session;
+		this.player = this.game.join(this);
 	}
 
 	@OnMessage
-	public void onMessage(@PathParam("gameId") String gameId, Message msg, Session session) {
+	public void onMessage(Message msg, Session session) {
 		String pot;
 		switch (msg.type) {
 			case DRAW:
-				if (!(this.player.turn==Turn.TAKE)) return;
-				Card card = this.player.drawCard();
-				if (card==null) return;
-				String value = card.toString();
-
-				this.sendMsg(session, new Message(MsgType.DRAW, "PlayerSession", value));
-				broadcast(gameId, new Message(MsgType.DRAW, this.name, null));
+				this.player.drawCard();
 				break;
 			case PICK:
-				if (!(this.player.turn==Turn.TAKE)) return;
 				this.player.pickDiscard();
-				broadcast(gameId, new Message(MsgType.PICK, this.name, null));
 				break;
 			case MELD:
-				if (!(this.player.turn==Turn.DISCARD)) return;
 				String[] args = msg.content.split(";");
 				int runIndex = Integer.parseInt(args[0]);
 				CardSet cards = new CardSet(args[1]);
-				MeldRet mRet = this.player.meld(cards, runIndex);
-				if (mRet==MeldRet.OK || mRet==MeldRet.POT) {
-					broadcast(gameId, new Message(MsgType.MELD, this.name, msg.content));
-				} else {
-					this.sendMsg(session, new Message(MsgType.MELD, "PlayerSession", mRet.name()));
-				}
-				if (mRet==MeldRet.POT) {
-					pot = this.player.getHand().toString();
-					this.sendMsg(session, new Message(MsgType.HAND, "PlayerSession", pot));
-					broadcast(gameId, new Message(MsgType.HAND, this.name, null));
-				}
+				this.player.meld(cards, runIndex);
 				break;
 			case DISCARD:
-				if (!(this.player.turn==Turn.DISCARD)) return;
 				Card c = new Card(msg.content);
-				DiscardRet dRet = this.player.discard(c);
-				if (dRet==DiscardRet.OK) {
-					broadcast(gameId, new Message(MsgType.DISCARD, this.name, msg.content));
-				} else if(dRet==DiscardRet.POT) {
-					pot = this.player.getHand().toString();
-					this.sendMsg(session, new Message(MsgType.HAND, "PlayerSession", pot));
-					broadcast(gameId, new Message(MsgType.HAND, this.name, null));
-				} else if(dRet==DiscardRet.CLOSE) {
-					this.game.closeRound();
-				} else {
-					this.sendMsg(session, new Message(MsgType.DISCARD, "PlayerSession", dRet.name()));
-				}
+				this.player.discard(c);
 				break;
 			case EXIT:// TODO may use onClose instead
 				break;
 		}
-
-
 	}
 
 	@OnError
@@ -104,28 +64,19 @@ public class PlayerSession {
 
 	@OnClose
 	public void onClose(Session session, CloseReason cReason) { // TODO
+		// this is called when the client closes the connection
 		System.out.println("onClose::" +  session.getId());
 		System.out.println("closeReason::" +cReason.toString());
 
 	}
 
-	public void sendMsg(Session session, Message msg) {
+	public boolean send(Message msg) {
 		try {
-			session.getBasicRemote().sendObject(msg);
+			this.session.getBasicRemote().sendObject(msg);
+			return true;
 		} catch (IOException | EncodeException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public static void broadcast(String gameId, Message msg) {
-		for (Session s: sessions) {
-			if (s.getUserProperties().get("gameId")==gameId) {
-				try {
-					s.getBasicRemote().sendObject(msg);
-				} catch (IOException | EncodeException e) {
-					e.printStackTrace();
-				}
-			}
+			return false;
 		}
 	}
 }

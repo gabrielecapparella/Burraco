@@ -21,8 +21,6 @@ public class Game {
 	private List<Card> deck;
 	private List<Card> discardPile;
 
-	public Game() {}
-
 	public Game(String id, int targetPoints, int numPlayers) {
 		this.id = id;
 		this.startTime = Instant.now();
@@ -33,11 +31,11 @@ public class Game {
 		this.team2 = new Team();
 
 		this.players = new ArrayList<>(numPlayers);
-		this.players.add(new Player(this, team1));
-		this.players.add(new Player(this, team2));
+		this.players.add(new Player(this, team1, 0));
+		this.players.add(new Player(this, team2, 1));
 		if (numPlayers==4) {
-			this.players.add(new Player(this, team1));
-			this.players.add(new Player(this, team2));
+			this.players.add(new Player(this, team1, 2));
+			this.players.add(new Player(this, team2, 3));
 		}
 	}
 
@@ -54,8 +52,7 @@ public class Game {
 		this.discardPile = this.drawCards(1);
 
 		int whoBegins = new Random().nextInt(this.players.size());
-		PlayerSession.broadcast(this.id,
-				new Message(MsgType.TURN, "Game", String.valueOf(whoBegins)));
+		this.broadcast(new Message(MsgType.TURN, "Game", String.valueOf(whoBegins)));
 		this.isRunning = true;
 	}
 
@@ -63,7 +60,7 @@ public class Game {
 		this.deck = new ArrayList<>(108);
 		for (Suits s: Suits.values()) {
 			if (s==Suits.J) {
-				for(int i = 0; i<4; i++) this.deck.add(new Card(0, Suits.J));
+				for(int i = 0; i<4; i++) this.deck.add(new Card(0, s));
 			} else {
 				for(int i = 1; i<=13; i++) this.deck.add(new Card(i, s));
 			}
@@ -71,15 +68,17 @@ public class Game {
 		Collections.shuffle(this.deck);
 	}
 
-	public Player join() {
+	public Player join(PlayerSession ps) {
 		if (this.seatsToAssign==0) return null;
 		this.seatsToAssign -= 1;
 		Player justJoined = this.players.get(this.seatsToAssign);
+		justJoined.setEndpoint(ps);
+		this.broadcast(new Message(MsgType.JOIN, "Game", justJoined.id));
 		if (this.seatsToAssign==0) this.setupTable();
 		return justJoined;
 	}
 
-	public List<Card> drawCards(int howMany) {
+	private List<Card> drawCards(int howMany) {
 		List<Card> cards;
 		try {
 			List<Card> sublist = this.deck.subList(0, howMany);
@@ -91,10 +90,16 @@ public class Game {
 		return cards;
 	}
 
+	public Card draw() {
+		List<Card> c = this.drawCards(1);
+		if (c==null) return null;
+		return c.get(0);
+	}
+
 	public void discard(Player p, Card c) {
 		this.discardPile.add(c);
 		int next = (this.players.indexOf(p)+1) % this.players.size();
-		PlayerSession.broadcast(this.id, new Message(MsgType.TURN, "Game", String.valueOf(next)));
+		this.broadcast(new Message(MsgType.TURN, "Game", String.valueOf(next)));
 	}
 
 	public List<Card> pickDiscardPile() {
@@ -110,9 +115,9 @@ public class Game {
 		int p1 = this.team1.countRoundPoints();
 		int p2 = this.team2.countRoundPoints();
 		if ((p1>=this.targetPoints || p2>=this.targetPoints) && p1!=p2) { // someone won
-			PlayerSession.broadcast(this.id, new Message(MsgType.END_GAME, "Game", p1+","+p2));
+			this.broadcast(new Message(MsgType.END_GAME, "Game", p1+","+p2));
 		} else {
-			PlayerSession.broadcast(this.id, new Message(MsgType.END_ROUND, "Game", p1+","+p2));
+			this.broadcast(new Message(MsgType.END_ROUND, "Game", p1+","+p2));
 			this.setupTable();
 		}
 	}
@@ -121,7 +126,7 @@ public class Game {
 		this.isRunning = false;
 		int p1 = this.team1.points;
 		int p2 = this.team2.points;
-		PlayerSession.broadcast(this.id, new Message(MsgType.END_GAME, "Game", p1+","+p2));
+		this.broadcast(new Message(MsgType.END_GAME, "Game", p1+","+p2));
 	}
 
 	public JSONObject getDescription() {
@@ -133,5 +138,11 @@ public class Game {
 		jo.put("seatsToAssign", this.seatsToAssign);
 		jo.put("isRunning", this.isRunning);
 		return jo;
+	}
+
+	public void broadcast(Message msg) {
+		for (Player p: this.players) {
+			p.sendMessage(msg);
+		}
 	}
 }

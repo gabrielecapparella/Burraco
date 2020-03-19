@@ -62,4 +62,8 @@ public class Team {
 		this.potTaken = true;
 		return this.pot;
 	}
+
+	public CardSet getRun(int index) {
+		return this.runs.get(index);
+	}
 }
