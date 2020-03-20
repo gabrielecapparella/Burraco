@@ -18,6 +18,7 @@ public class CardSet extends ArrayList<Card>{
 	}
 
 	public CardSet(String cards) {
+		super();
 		for (String v: cards.split(",")) {
 			super.add(new Card(v));
 		}
@@ -32,7 +33,7 @@ public class CardSet extends ArrayList<Card>{
 		if (get(0).num==0 && get(1).num==0) return false; // two jokers
 
 		this.runType = this.inferType();
-		if(this.runType==RunType.GROUP) return isLegit = this.isLegitGroup();
+		if(this.runType==RunType.GROUP) isLegit = this.isLegitGroup();
 		else isLegit = this.isLegitSequence();
 
 		if (isLegit) this.burType = this.getBuracoType();

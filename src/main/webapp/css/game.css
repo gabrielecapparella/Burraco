@@ -1,0 +1,77 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+}
+
+div {
+	border:1px solid black;
+	display: flex;
+}
+
+#main {
+	border: 0;
+	height: 100%;
+}
+
+.grow {
+	flex: 1;
+}
+
+.row {
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.column {
+	flex-direction: column;
+}
+
+#north-runs {
+	justify-content: right;
+	align-items: flex-start;
+	align-content: flex-start;
+}
+
+#south-runs {
+	justify-content: left;
+	align-items: flex-start;
+	align-content: flex-start;
+}
+
+#west, #east {
+	width: 30px;
+}
+
+#north {
+	height: 30px;
+}
+
+#south {
+	height: 50px;
+}
+
+.card {
+	width: 60px;
+	height: 90px;
+}
+
+.half-card {
+	width: 60px;
+	height: 15px;
+	overflow:hidden;
+}
+
+#deck-discard {
+	width: 150px;
+}
+
+img {
+	width: 60px;
+	height: 90px;
+	/*height: 100%;*/
+}
+
+.run {
+	margin: 3px;
+}

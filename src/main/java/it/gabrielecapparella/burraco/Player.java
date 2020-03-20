@@ -125,8 +125,4 @@ public class Player {
 		this.hand = hand;
 		this.sendMessage(new Message(MsgType.HAND, "Game", hand.toString()));
 	}
-
-	public CardSet getHand() {
-		return hand;
-	}
 }
