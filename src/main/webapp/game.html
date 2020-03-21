@@ -4,7 +4,9 @@
 	<meta charset="UTF-8">
 	<title>Burraco</title>
 	<link rel="stylesheet" type="text/css" href="/css/game.css">
+	<link rel="stylesheet" type="text/css" href="/css/cards.css">
 	<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="/js/ui.js"></script>
 <!--	<script type="text/javascript" src="/js/test.js"></script>-->
 </head>
 <body>
@@ -13,7 +15,7 @@
 		<div id="middle" class="row grow">
 			<div id="west" class="column"></div>
 			<div id="table" class="row grow">
-				<div id="north-runs" class="row grow">
+				<div id="my-runs" class="row grow">
 					<div class="run column">
 						<div class="half-card">
 							<img src="/cards/6D.jpg">
@@ -27,14 +29,14 @@
 						<div class="half-card">
 							<img src="/cards/3D.jpg">
 						</div>
-						<div class="half-card">
+						<div class="half-horiz">
 							<img src="/cards/2D.jpg">
 						</div>
-						<div class="card">
+						<div class="horiz">
 							<img src="/cards/1D.jpg">
 						</div>
 					</div>
-					<div class="run column">
+					<div class="run column" data-index="0">
 						<div class="half-card">
 							<img src="/cards/6D.jpg">
 						</div>
@@ -47,200 +49,23 @@
 						<div class="half-card">
 							<img src="/cards/3D.jpg">
 						</div>
-						<div class="half-card">
+						<div class="half-horiz">
 							<img src="/cards/2D.jpg">
 						</div>
-						<div class="card">
+						<div class="horiz">
 							<img src="/cards/1D.jpg">
 						</div>
 					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-					<div class="run column">
-						<div class="half-card">
-							<img src="/cards/6D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/5D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/4D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/3D.jpg">
-						</div>
-						<div class="half-card">
-							<img src="/cards/2D.jpg">
-						</div>
-						<div class="card">
-							<img src="/cards/1D.jpg">
-						</div>
-					</div>
-
 				</div>
 				<div id="deck-discard" class="row">
-					<div id="deck" class="column"></div>
-					<div id="discard" class="column"></div>
+					<div id="deck" class="card">
+						<img src="/cards/back.jpg">
+					</div>
+					<div id="discard" class="card">
+						<img src="/cards/13C.jpg">
+					</div>
 				</div>
-				<div id="south-runs" class="row grow"></div>
+				<div id="other-runs" class="row grow"></div>
 			</div>
 			<div id="east" class="column"></div>
 		</div>

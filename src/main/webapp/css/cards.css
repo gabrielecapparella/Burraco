@@ -1,0 +1,69 @@
+img {
+	width: 68px;
+	height: 102px;
+	flex-shrink: 0;
+	border:1px solid black;
+}
+
+.card {}
+
+.half-card {
+	width: 70px;
+	height: 20px;
+	overflow:hidden;
+}
+
+.hand-card {
+	width: 70px;
+	height: 30px;
+	overflow:hidden;
+}
+
+.hand-half {
+	width: 20px;
+	height: 30px;
+	overflow: hidden;
+}
+
+.hand-back > img{
+	position: relative;
+	margin: -74px 0;
+}
+
+.hand-back-horiz {
+	width: 30px;
+	height: 70px;
+	overflow: hidden;
+}
+
+.hand-half-back-horiz {
+	width: 30px;
+	height: 20px;
+	overflow: hidden;
+}
+
+.hand-back-horiz > img, .hand-half-back-horiz > img {
+	transform-origin: 52px center;
+	transform: rotate(90deg);
+}
+
+.hand-west > img {
+	position: relative;
+	margin: 0 -74px;
+}
+
+.horiz {
+	width: 104px;
+	height: 70px;
+}
+
+.horiz > img, .half-horiz > img {
+	transform-origin: 52px center;
+	transform: rotate(90deg);
+}
+
+.half-horiz {
+	width: 104px;
+	height: 12px;
+	overflow: hidden;
+}

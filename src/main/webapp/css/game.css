@@ -1,77 +1,74 @@
-html, body {
+body {
 	margin: 0;
 	padding: 0;
 	height: 100vh;
 }
 
-div {
-	border:1px solid black;
-	display: flex;
-}
+div { display: flex; }
 
 #main {
-	border: 0;
 	height: 100%;
+	background-color: #004b00;
 }
 
-.grow {
-	flex: 1;
-}
+.grow { flex: 1; }
 
 .row {
 	flex-direction: row;
 	flex-wrap: wrap;
 }
 
-.column {
-	flex-direction: column;
+.column { flex-direction: column; }
+
+.run {
+	margin: 2px;
+	align-items: center;
 }
 
-#north-runs {
+#my-runs {
 	justify-content: right;
 	align-items: flex-start;
 	align-content: flex-start;
+	border:1px solid black;
 }
 
-#south-runs {
+#other-runs {
 	justify-content: left;
 	align-items: flex-start;
 	align-content: flex-start;
+	border:1px solid black;
 }
 
 #west, #east {
-	width: 30px;
+	width: 35px;
+	border:1px solid black;
+	justify-content: center;
+
+}
+
+#east {
+	align-items: flex-end;
 }
 
 #north {
-	height: 30px;
+	height: 35px;
+	border:1px solid black;
+	justify-content: center;
 }
 
 #south {
-	height: 50px;
-}
-
-.card {
-	width: 60px;
-	height: 90px;
-}
-
-.half-card {
-	width: 60px;
-	height: 15px;
-	overflow:hidden;
+	height: 60px;
+	justify-content: center;
+	/*align-items: flex-end;*/
+	/*align-content: flex-end;*/
+	width: 50%;
+	margin: auto;
+	flex-wrap: wrap-reverse;
+	border:1px solid black;
 }
 
 #deck-discard {
 	width: 150px;
-}
-
-img {
-	width: 60px;
-	height: 90px;
-	/*height: 100%;*/
-}
-
-.run {
-	margin: 3px;
+	justify-content: space-between;
+	align-items: center;
 }
