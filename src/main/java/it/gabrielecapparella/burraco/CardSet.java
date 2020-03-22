@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CardSet extends ArrayList<Card>{
 
-	private BuracoType burType;
+	private BuracoType burType = BuracoType.NONE;
 	private RunType runType;
 
 	public CardSet() {
@@ -150,6 +150,8 @@ public class CardSet extends ArrayList<Card>{
 			result.append(c.toString());
 			result.append(",");
 		}
+		result.append(";"+this.burType.name());
+
 		return result.toString();
 	}
 }

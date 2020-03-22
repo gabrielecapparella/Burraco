@@ -3,6 +3,7 @@ img {
 	height: 102px;
 	flex-shrink: 0;
 	border:1px solid black;
+	z-index: 0;
 }
 
 .card {}
@@ -11,6 +12,23 @@ img {
 	width: 70px;
 	height: 20px;
 	overflow:hidden;
+}
+
+.half-discard {
+	width: 70px;
+	height: 5px;
+	overflow: hidden;
+}
+
+.half-deck {
+	width: 70px;
+	height: 3px;
+	overflow: hidden;
+}
+
+.half-deck > img{
+	position: relative;
+	margin: -101px 0;
 }
 
 .hand-card {
@@ -57,7 +75,7 @@ img {
 	height: 70px;
 }
 
-.horiz > img, .half-horiz > img {
+.horiz > img, .half-horiz > img,  .half-horiz-overflow > img{
 	transform-origin: 52px center;
 	transform: rotate(90deg);
 }
@@ -66,4 +84,13 @@ img {
 	width: 104px;
 	height: 12px;
 	overflow: hidden;
+}
+
+.half-horiz-overflow {
+	width: 104px;
+	height: 12px;
+}
+
+.selected-card {
+	filter: invert(25%);
 }
