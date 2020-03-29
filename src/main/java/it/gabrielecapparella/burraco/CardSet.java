@@ -3,6 +3,7 @@ package it.gabrielecapparella.burraco;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class CardSet extends ArrayList<Card>{
 
@@ -19,7 +20,7 @@ public class CardSet extends ArrayList<Card>{
 
 	public CardSet(String cards) {
 		super();
-		for (String v: cards.split(",")) {
+		for (String v: cards.split(";")[0].split(",")) {
 			super.add(new Card(v));
 		}
 	}
@@ -145,13 +146,10 @@ public class CardSet extends ArrayList<Card>{
 
 	@Override
 	public String toString() {
-		StringBuilder result = new StringBuilder();
+		StringJoiner result = new StringJoiner(",");
 		for (Card c: this) {
-			result.append(c.toString());
-			result.append(",");
+			result.add(c.toString());
 		}
-		result.append(";"+this.burType.name());
-
-		return result.toString();
+		return result.toString()+";"+this.burType.name();
 	}
 }

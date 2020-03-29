@@ -1,3 +1,4 @@
+// TODO make this a class
 const CARD_WIDTH = 70;
 const HALF_CARD_WIDTH = 20;
 
@@ -53,7 +54,7 @@ function discard_close() {
 	$("#discard > .half-card").removeClass("half-card").addClass("half-discard");
 }
 
-function display_hand() {
+function display_hand(hand) {
 	let hand_html = '';
 	let per_row = 1+ Math.floor(($("#south").width()-CARD_WIDTH)/HALF_CARD_WIDTH);
 	let card_class;
@@ -109,21 +110,19 @@ function display_other_hand(whom, num_cards) {
 	}
 }
 
-let hand = "1S,2S,3S,4S,5S,6S,7S,8S,9S,10S,11S,12S,13S,1S".split(",");
-
 $(function() {
-	display_run("#my-runs", "1;CLEAN;1D,2D,3D,4D,5D,6D,7D");
-	display_run("#my-runs", "2;SEMICLEAN;1D,2D,3D,4D,5D,6D,7D");
-	display_run("#my-runs", "3;DIRTY;1D,2D,3D,4D,5D,6D,7D");
-
-	display_hand();
-	display_other_hand("north", 5);
-	display_other_hand("west", 5);
-	display_other_hand("east", 5);
-
-	discard_display("10C,11C,12C,13C");
-	$("#discard").on("mouseenter", discard_open);
-	$("#discard").on("mouseleave", discard_close);
-
-	deck_display(42);
+	// display_run("#my-runs", "1;CLEAN;1D,2D,3D,4D,5D,6D,7D");
+	// display_run("#my-runs", "2;SEMICLEAN;1D,2D,3D,4D,5D,6D,7D");
+	// display_run("#my-runs", "3;DIRTY;1D,2D,3D,4D,5D,6D,7D");
+	//
+	// display_hand();
+	// display_other_hand("north", 5);
+	// display_other_hand("west", 5);
+	// display_other_hand("east", 5);
+	//
+	// discard_display("10C,11C,12C,13C");
+	// $("#discard").on("mouseenter", discard_open);
+	// $("#discard").on("mouseleave", discard_close);
+	//
+	// deck_display(42);
 });
