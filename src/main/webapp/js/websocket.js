@@ -1,8 +1,14 @@
 
-$(function(){
-    let endpoint = "ws://"+window.location.hostname+":8080"+window.location.pathname;
-    let webSocket = new WebSocket(endpoint);
+$(function() {
+    $.getJSON('/games/'+window.location.pathname, main);
+});
 
+function main(game_info) {
+    let endpoint = "ws://"+window.location.hostname+":8080"+game_info["id"];
+    let playerId = -1;
+    let webSocket = new WebSocket(endpoint);
+    let burracoUI = new BurracoUI(game_info["numPlayers"], webSocket.send);
+    // TODO: use game_info["seatsToAssign"] in some way
 
     webSocket.onopen = function(event) {
         console.log('onopen::' + JSON.stringify(event, null, 4));
@@ -11,18 +17,35 @@ $(function(){
     webSocket.onmessage = function(event) {
         let msg = JSON.parse(event.data);
         console.log('onmessage::' + JSON.stringify(msg, null, 4));
-        console.log(typeof(msg));
-        console.log(msg["type"]=="HAND");
         switch (msg["type"]) {
             case "JOIN":
+                if (msg["sender"]=="Player") {
+                    playerId = parseInt(msg["content"]);
+                    burracoUI.set_id(playerId);
+                    // display stuff
+                } else {
+                    // display other stuff
+                }
+                break;
+            case "START_ROUND":
+                let discard = decode_cardset(msg["content"])[0];
+                burracoUI.set_discardPile(discard);
+                burracoUI.startGame();
                 break;
             case "HAND":
                 let hand = decode_cardset(msg["content"])[0];
-                display_hand(hand);
+                burracoUI.set_hand(hand);
                 break;
             case "TURN":
+                // display stuff and timer
                 break;
             case "DRAW":
+                if (msg["sender"]=="Player") {
+                    let card = msg["content"].replace("|", "");
+                    burracoUI.draw_card(card);
+                } else if (msg["content"]!=playerId){
+                    burracoUI.other_draw_card(msg["content"]);
+                }
                 break;
             case "PICK":
                 break;
@@ -37,6 +60,7 @@ $(function(){
             case "END_GAME":
                 break;
             case "CHAT":
+                burracoUI.display_chat(msg["sender"], msg["content"]);
                 break;
         }
     }
@@ -49,7 +73,7 @@ $(function(){
         console.log('onerror::' + JSON.stringify(event, null, 4));
     }
 
-});
+}
 
 function decode_cardset(cs) {
     cs = cs.split(";");

@@ -19,7 +19,7 @@ public class Game {
 	private Team team2;
 	private List<Player> players;
 	private List<Card> deck;
-	private List<Card> discardPile;
+	private CardSet discardPile;
 
 	public Game(String id, int targetPoints, int numPlayers) {
 		this.id = id;
@@ -49,7 +49,8 @@ public class Game {
 			p.setHand(new CardSet(this.drawCards(11)));
 		}
 
-		this.discardPile = this.drawCards(1);
+		this.discardPile = new CardSet(this.drawCards(1));
+		this.broadcast(new Message(MsgType.START_ROUND, "Game", this.discardPile.toString()));
 
 		int whoBegins = new Random().nextInt(this.players.size());
 		this.broadcast(new Message(MsgType.TURN, "Game", String.valueOf(whoBegins)));
@@ -137,6 +138,7 @@ public class Game {
 		jo.put("numPlayers", this.players.size());
 		jo.put("seatsToAssign", this.seatsToAssign);
 		jo.put("isRunning", this.isRunning);
+		// TODO: add seated players id/names
 		return jo;
 	}
 

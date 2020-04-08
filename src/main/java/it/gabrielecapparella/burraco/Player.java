@@ -18,23 +18,23 @@ public class Player {
 
 	public void drawCard() {
 		if (!(this.turn==Turn.TAKE)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "You cannot draw now."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "You cannot draw now."));
 			return;
 		}
 		Card drawn = this.game.draw();
 		if (drawn==null) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "Deck is empty."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "Deck is empty."));
 			return;
 		}
 		this.hand.add(drawn);
-		this.sendMessage(new Message(MsgType.DRAW, "Game", drawn.toString()));
-		this.game.broadcast(new Message(MsgType.DRAW, this.id, null));
+		this.sendMessage(new Message(MsgType.DRAW, "Player", drawn.toString()));
+		this.game.broadcast(new Message(MsgType.DRAW, "Game", this.id));
 		this.turn = Turn.DISCARD;
 	}
 
 	public void pickDiscard() {
 		if (!(this.turn==Turn.TAKE)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "You cannot pick now."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "You cannot pick now."));
 			return;
 		}
 		List<Card> picked = this.game.pickDiscardPile();
@@ -45,27 +45,27 @@ public class Player {
 
 	public void meld(CardSet cs, int runIndex) {
 		if (!(this.turn==Turn.DISCARD)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "You cannot meld now."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "You cannot meld now."));
 			return;
 		}
 		for (Card c: cs) {
 			if (!this.hand.contains(c)) {
-				this.sendMessage(new Message(MsgType.CHAT, "Game", "You don't have those cards."));
+				this.sendMessage(new Message(MsgType.CHAT, "Player", "You don't have those cards."));
 				return;
 			}
 		}
 		if (runIndex<0 && !cs.isLegitRun()) { // new run
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "Not a valid run."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "Not a valid run."));
 			return;
 		}
 		boolean willPot = cs.size()==this.hand.size();
 		if(willPot && this.team.potTaken) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "Cannot remain without cards."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot remain without cards."));
 			return;
 		}
 
 		if (!this.team.meld(cs, runIndex)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "Not a valid run."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "Not a valid run."));
 			return;
 		}
 
@@ -81,16 +81,16 @@ public class Player {
 
 	public void discard(Card c) {
 		if (!(this.turn==Turn.DISCARD)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "You cannot discard now."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "You cannot discard now."));
 			return;
 		}
 		if (!this.hand.contains(c)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "You don't own that card."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "You don't own that card."));
 			return;
 		}
 		boolean willEmpty = this.hand.size()==1;
 		if (willEmpty && (!this.team.canClose() || c.wildcard)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Game", "You cannot close."));
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "You cannot close."));
 			return;
 		}
 
@@ -119,10 +119,11 @@ public class Player {
 
 	public void setEndpoint(PlayerSession ps) {
 		this.endpoint = ps;
+		this.sendMessage(new Message(MsgType.JOIN, "Player", this.id));
 	}
 
 	public void setHand(CardSet hand) {
 		this.hand = hand;
-		this.sendMessage(new Message(MsgType.HAND, "Game", hand.toString()));
+		this.sendMessage(new Message(MsgType.HAND, "Player", hand.toString()));
 	}
 }

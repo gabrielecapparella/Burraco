@@ -2,6 +2,7 @@ package it.gabrielecapparella.burraco;
 
 public enum MsgType {
 	JOIN,
+	START_ROUND,
 	HAND,       // used both at the beginning and for pot
 	TURN,
 	DRAW,

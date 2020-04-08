@@ -46,8 +46,8 @@ public class GameRepo {
         return ja.toString();
     }
 
-    //@GET
-    //@Path("{gameId}")
+    @GET
+    @Path("{gameId}")
     public Game getGameById(String gameId) {
         return id2game.get(gameId);
     }
