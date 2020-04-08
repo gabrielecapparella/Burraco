@@ -39,7 +39,7 @@ public class Player {
 		}
 		List<Card> picked = this.game.pickDiscardPile();
 		this.hand.addAll(picked);
-		this.game.broadcast(new Message(MsgType.PICK, this.id, null));
+		this.game.broadcast(new Message(MsgType.PICK, "Game", this.id));
 		this.turn = Turn.DISCARD;
 	}
 

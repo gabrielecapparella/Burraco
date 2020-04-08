@@ -48,8 +48,16 @@ function main(game_info) {
                 }
                 break;
             case "PICK":
+                let who = msg["content"];
+                if (who==playerId){
+                    burracoUI.pick();
+                } else {
+                    burracoUI.other_pick(who);
+                }
                 break;
             case "MELD":
+                let run = decode_run(msg["content"]);
+                burracoUI.display_run(msg["sender"], run);
                 break;
             case "DISCARD":
                 break;
@@ -80,4 +88,10 @@ function decode_cardset(cs) {
     let burType = cs[1];
     let cards = cs[0].split("|").join("").split(",");
     return [cards, burType];
+}
+
+function decode_run(run) {
+    let [index, cards, bur_type] = run.split(";");
+    cards = cards.split("|").join("").split(",");
+    return [index, cards, bur_type];
 }

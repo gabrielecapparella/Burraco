@@ -55,14 +55,27 @@ class BurracoUI {
 		this.display_other_hand(who_id);
 	}
 
-	display_run(where, run) { // where= "#my-runs" || "#other-runs"
-		let [index, bur_type, cards] = run.split(";");
-		let run_div = $(where+' > div[data-index="'+index+'"]');
+	pick() {
+		this.hand.concat(this.discardPile);
+		this.discardPile = [];
+		this.display_hand();
+	}
+
+	other_pick(who_id) {
+		this.cardsInOtherHands[who_id] += this.discardPile.length;
+		this.discardPile = [];
+		this.display_other_hand(who_id);
+	}
+
+	display_run(who_id, run_index, cards, bur_type) { // where= "#my-runs" || "#other-runs"
+		let where = "#my-runs";
+		if (Math.abs(who_id-this.id)==1) where = "#other-runs";
+
+		let run_div = $(where+' > div[data-index="'+run_index+'"]');
 		if (!run_div.length) {
-			$(where).append('<div class="run column" data-index="'+index+'"></div>');
-			run_div = $(where+' > div[data-index="'+index+'"]');
+			$(where).append('<div class="run column" data-index="'+run_index+'"></div>');
+			run_div = $(where+' > div[data-index="'+run_index+'"]');
 		}
-		cards = cards.split(',');
 		let run_html = "";
 		let c_class;
 		for (let i = cards.length-1; i>=0; i--) {
