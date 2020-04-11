@@ -31,6 +31,7 @@ public class PlayerSession {
 
 	@OnMessage
 	public void onMessage(Message msg, Session session) {
+		System.out.println(msg.toString());
 		String pot;
 		switch (msg.type) {
 			case DRAW:

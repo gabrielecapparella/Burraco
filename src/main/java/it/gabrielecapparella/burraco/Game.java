@@ -53,7 +53,8 @@ public class Game {
 		this.broadcast(new Message(MsgType.START_ROUND, "Game", this.discardPile.toString()));
 
 		int whoBegins = new Random().nextInt(this.players.size());
-		this.broadcast(new Message(MsgType.TURN, "Game", String.valueOf(whoBegins)));
+		this.players.get(whoBegins).setTurn(Turn.TAKE);
+
 		this.isRunning = true;
 	}
 
@@ -100,7 +101,7 @@ public class Game {
 	public void discard(Player p, Card c) {
 		this.discardPile.add(c);
 		int next = (this.players.indexOf(p)+1) % this.players.size();
-		this.broadcast(new Message(MsgType.TURN, "Game", String.valueOf(next)));
+		this.players.get(next).setTurn(Turn.TAKE);
 	}
 
 	public List<Card> pickDiscardPile() {
@@ -130,7 +131,7 @@ public class Game {
 		this.broadcast(new Message(MsgType.END_GAME, "Game", p1+","+p2));
 	}
 
-	public JSONObject getDescription() {
+	public String getDescription() {
 		JSONObject jo = new JSONObject();
 		jo.put("id", this.id);
 		jo.put("timestamp", this.startTime);
@@ -139,7 +140,7 @@ public class Game {
 		jo.put("seatsToAssign", this.seatsToAssign);
 		jo.put("isRunning", this.isRunning);
 		// TODO: add seated players id/names
-		return jo;
+		return jo.toString();
 	}
 
 	public void broadcast(Message msg) {

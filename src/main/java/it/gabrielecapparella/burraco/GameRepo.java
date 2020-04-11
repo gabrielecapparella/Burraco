@@ -15,12 +15,14 @@ public class GameRepo {
     private static GameRepo instance;
 
     public GameRepo() {
-        instance = this;
-        GameInfo info = new GameInfo();
-        info.setNumPlayers(2);
-        info.setTargetPoints(2005);
-        String id = createGame(info);
-        System.out.println(id);
+        if (instance == null) {
+            instance = this;
+            GameInfo info = new GameInfo();
+            info.setNumPlayers(2);
+            info.setTargetPoints(2005);
+            String id = createGame(info);
+            System.out.println(id);
+        }
     }
 
     @POST
@@ -46,10 +48,15 @@ public class GameRepo {
         return ja.toString();
     }
 
-    @GET
-    @Path("{gameId}")
     public Game getGameById(String gameId) {
         return id2game.get(gameId);
+    }
+
+    @GET
+    @Path("{gameId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getGameDescr(@PathParam("gameId") String gameId) {
+        return this.getGameById(gameId).getDescription();
     }
 
     @DELETE

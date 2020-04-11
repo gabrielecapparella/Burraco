@@ -12,4 +12,9 @@ public class Message {
         this.sender = sender;
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return this.type.name()+";"+this.sender+";"+this.content;
+    }
 }

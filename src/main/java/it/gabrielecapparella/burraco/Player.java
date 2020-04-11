@@ -29,7 +29,7 @@ public class Player {
 		this.hand.add(drawn);
 		this.sendMessage(new Message(MsgType.DRAW, "Player", drawn.toString()));
 		this.game.broadcast(new Message(MsgType.DRAW, "Game", this.id));
-		this.turn = Turn.DISCARD;
+		this.setTurn(Turn.DISCARD);
 	}
 
 	public void pickDiscard() {
@@ -40,7 +40,7 @@ public class Player {
 		List<Card> picked = this.game.pickDiscardPile();
 		this.hand.addAll(picked);
 		this.game.broadcast(new Message(MsgType.PICK, "Game", this.id));
-		this.turn = Turn.DISCARD;
+		this.setTurn(Turn.DISCARD);
 	}
 
 	public void meld(CardSet cs, int runIndex) {
@@ -105,7 +105,7 @@ public class Player {
 			this.team.points += 100;
 			this.game.closeRound();
 		}
-		this.turn = Turn.NOPE;
+		this.setTurn(Turn.NOPE);
 	}
 
 	public void payHandPoints() {
@@ -125,5 +125,10 @@ public class Player {
 	public void setHand(CardSet hand) {
 		this.hand = hand;
 		this.sendMessage(new Message(MsgType.HAND, "Player", hand.toString()));
+	}
+
+	public void setTurn(Turn t) {
+		this.turn = t;
+		this.game.broadcast(new Message(MsgType.TURN, this.id, t.name()));
 	}
 }

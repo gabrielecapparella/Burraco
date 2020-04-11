@@ -2,22 +2,42 @@ const CARD_WIDTH = 70;
 const HALF_CARD_WIDTH = 20;
 
 class BurracoUI {
-	constructor(numPlayers, send_func) {
+	constructor(numPlayers, web_socket) {
 		this.hand = [];
 		this.numPlayers = numPlayers;
 		this.cardsInOtherHands = [];
 		this.discardPile = [];
 		this.player2seat = [];
-		this.send = send_func;
+		this.webSocket = web_socket;
+		this.turnPhase = "NOPE";
+
+		$("#discard").on("mouseenter", this.discard_open);
+		$("#discard").on("mouseleave", this.discard_close);
 	}
 
 	startGame() {
 		this.cardsInDeck = 108-1-11*this.numPlayers;
+		this.display_deck()
 		for (let p in this.player2seat) {
 			if (p!=this.id) {
 				this.cardsInOtherHands[p] = 11;
 			}
 		}
+	}
+
+	set_turn(t) {
+		// TODO: set triggers
+		switch (t) {
+			case "TAKE":
+				$("#deck").on("click", this.action_draw.bind(this));
+				$("#discard").on("click", this.action_pick);
+				break;
+			case "DISCARD":
+				break;
+			case "NOPE":
+				break;
+		}
+		this.turnPhase = t;
 	}
 
 	set_id(id) {
@@ -45,29 +65,54 @@ class BurracoUI {
 		this.display_hand();
 	}
 
+	action_draw() { // TODO
+		alert("draw_card");
+		let msg = JSON.stringify({"type":"DRAW", "sender":null, "content":null});
+		this.webSocket.send(msg);
+	}
+
+	action_pick() { // TODO
+		alert("pick_card");
+	}
+
 	draw_card(card) {
 		this.hand.push(card);
 		this.display_hand();
 	}
 
 	other_draw_card(who_id) { // other as in "other player"
-		this.cardsInOtherHands[who_id] -= 1;
+		this.cardsInOtherHands[who_id] += 1;
 		this.display_other_hand(who_id);
 	}
 
-	pick() {
-		this.hand.concat(this.discardPile);
+	pick(who_id) {
+		if (who_id==this.id) {
+			this.hand.concat(this.discardPile);
+			this.display_hand();
+		} else {
+			this.cardsInOtherHands[who_id] += this.discardPile.length;
+			this.display_other_hand(who_id);
+		}
 		this.discardPile = [];
-		this.display_hand();
 	}
 
-	other_pick(who_id) {
-		this.cardsInOtherHands[who_id] += this.discardPile.length;
-		this.discardPile = [];
-		this.display_other_hand(who_id);
+	discard(who_id, card) {
+		this.discardPile.add(card);
+		this.display_discard();
+		if (who_id==this.id) {
+			this.hand_remove([card]);
+		} else {
+			this.cardsInOtherHands[who_id] -= 1;
+			this.display_other_hand(who_id);
+		}
 	}
 
-	display_run(who_id, run_index, cards, bur_type) { // where= "#my-runs" || "#other-runs"
+	display_run(who_id, run_index, cards, bur_type) {
+		if (who_id!=this.id) {
+			this.cardsInOtherHands[who_id] -= cards.length;
+			this.display_other_hand(who_id);
+		}
+
 		let where = "#my-runs";
 		if (Math.abs(who_id-this.id)==1) where = "#other-runs";
 
@@ -93,7 +138,7 @@ class BurracoUI {
 		run_div.html(run_html);
 	}
 
-	deck_display() {
+	display_deck() {
 		let to_display = Math.floor(this.cardsInDeck/5)+1;
 		let result = '<div class="card"><img src="/cards/back.jpg"></div>';
 		for (let i=1; i<to_display; i++) {
@@ -104,11 +149,13 @@ class BurracoUI {
 
 	display_discard() {
 		let result = "";
-		for (let i=0; i<this.discardPile.length-1; i++) {
+		let i;
+		for (i=0; i<this.discardPile.length-1; i++) {
 			result += '<div class="half-discard"><img src="/cards/'+this.discardPile[i]+'.jpg"></div>';
 		}
 		result += '<div class="card"><img src="/cards/'+this.discardPile[i]+'.jpg"></div>';
 		$("#discard").html(result);
+
 	}
 
 	discard_open() {
@@ -119,7 +166,8 @@ class BurracoUI {
 		$("#discard > .half-card").removeClass("half-card").addClass("half-discard");
 	}
 
-	display_hand() {
+	display_hand() { // TODO: check if can be merged with display_other_hand
+		let parent = this;
 		let hand_html = '';
 		let per_row = 1+ Math.floor(($("#south").width()-CARD_WIDTH)/HALF_CARD_WIDTH);
 		let card_class;
@@ -143,8 +191,8 @@ class BurracoUI {
 			let src = mov.parent().index();
 			let dst = $(this).parent().index();
 			if(src!=dst) {
-				this.hand.splice(dst, 0, this.hand.splice(src, 1)[0]);
-				this.display_hand();
+				parent.hand.splice(dst, 0, parent.hand.splice(src, 1)[0]);
+				parent.display_hand();
 			}
 		});
 	}
@@ -174,6 +222,10 @@ class BurracoUI {
 			hand += '<div class="hand-back-horiz"><img src="/cards/back.jpg"></div>';
 			$("#east").html(hand);
 		}
+	}
+
+	hand_remove(cards) {
+		// TODO: remove cards from hand preferring the ones highlighted
 	}
 
 	display_chat(who, msg) {
