@@ -1,5 +1,8 @@
 package it.gabrielecapparella.burraco;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Card implements Comparable<Card> {
 	public int num;
 	public Suits suit;
@@ -15,10 +18,12 @@ public class Card implements Comparable<Card> {
 	}
 
 	public Card(String s) {
-		String[] v = s.split("\\|");
-		this.num = Integer.parseInt(v[0]);
-		this.suit = Suits.valueOf(v[1]);
-		if (!s.equals("0|J") && (num<0 || num>13)) throw new IllegalArgumentException("Invalid number.");
+		Pattern p = Pattern.compile("([0-9]{1,2})([DCHSJ])");
+		Matcher m = p.matcher(s);
+		if (!m.matches()) throw new IllegalArgumentException("Invalid args.");
+		this.num = Integer.parseInt(m.group(1));
+		this.suit = Suits.valueOf(m.group(2));
+		if (!s.equals("0J") && (num<0 || num>13)) throw new IllegalArgumentException("Invalid number.");
 		this.wildcard = (this.num==0 || this.num==2);
 		this.points = this.getPoints();
 	}
@@ -41,7 +46,15 @@ public class Card implements Comparable<Card> {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass()) return false;
+		Card that = (Card) o;
+		if (this.num != that.num) return false;
+		return this.suit == that.suit;
+	}
+
+	@Override
 	public String toString() {
-		return this.num +"|"+this.suit.name();
+		return this.num + this.suit.name();
 	}
 }

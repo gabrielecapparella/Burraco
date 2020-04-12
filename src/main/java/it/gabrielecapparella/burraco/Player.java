@@ -59,17 +59,21 @@ public class Player {
 			return;
 		}
 		boolean willPot = cs.size()==this.hand.size();
-		if(willPot && this.team.potTaken) {
+		boolean willBurraco = this.team.willBurraco(cs.size(), runIndex);
+		if(willPot && this.team.potTaken && !willBurraco) {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot remain without cards."));
 			return;
 		}
-
-		if (!this.team.meld(cs, runIndex)) {
+		runIndex = this.team.meld(cs, runIndex);
+		if (runIndex<0) {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "Not a valid run."));
 			return;
 		}
 
-		this.hand.removeAll(cs);
+		for (Card c: cs) { // .removeAll() would remove duplicates too
+			this.hand.remove(c);
+		}
+
 		CardSet newRun = this.team.getRun(runIndex);
 		this.game.broadcast(new Message(MsgType.MELD, this.id, runIndex+";"+newRun.toString()));
 
@@ -88,12 +92,8 @@ public class Player {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "You don't own that card."));
 			return;
 		}
-		boolean willEmpty = this.hand.size()==1;
-		if (willEmpty && (!this.team.canClose() || c.wildcard)) {
-			this.sendMessage(new Message(MsgType.CHAT, "Player", "You cannot close."));
-			return;
-		}
 
+		boolean willEmpty = this.hand.size()==1;
 		this.hand.remove(c);
 		this.game.discard(this, c);
 		this.game.broadcast(new Message(MsgType.DISCARD, this.id, c.toString()));

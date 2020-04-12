@@ -61,15 +61,15 @@ function main(game_info) {
 				break;
 			case "MELD":
 				let run = decode_run(msg["content"]);
+				if (msg["sender"]==playerId) burracoUI.meld_hand_remove(run[0], run[1]);
 				burracoUI.display_run(msg["sender"], run);
-				if (msg["sender"]==playerId) burracoUI.hand_remove(run[2]);
 				break;
 			case "DISCARD":
-				let card = msg["content"].replace("|", "");
+				let card = msg["content"];
 				burracoUI.discard(msg["sender"], card);
 				break;
 			case "POT":
-				// TODO
+				burracoUI.pot_taken(msg["sender"]);
 				break;
 			case "END_ROUND":
 				// TODO
@@ -97,12 +97,12 @@ function main(game_info) {
 function decode_cardset(cs) {
 	cs = cs.split(";");
 	let burType = cs[1];
-	let cards = cs[0].split("|").join("").split(",");
+	let cards = cs[0].split(",");
 	return [cards, burType];
 }
 
 function decode_run(run) {
 	let [index, cards, bur_type] = run.split(";");
-	cards = cards.split("|").join("").split(",");
+	cards = cards.split(",");
 	return [index, cards, bur_type];
 }

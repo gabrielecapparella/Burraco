@@ -11,6 +11,12 @@ div { display: flex; }
 	background-color: #004b00;
 }
 
+#discard {
+	border:1px solid black;
+	min-width: 70px;
+	min-height: 104px;
+}
+
 .grow { flex: 1; }
 
 .row {

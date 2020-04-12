@@ -17,30 +17,30 @@ public class Team {
 		return false;
 	}
 
-	public boolean meld(CardSet cards, int runIndex) {
+	public int meld(CardSet cards, int runIndex) {
 		if (runIndex<0) {
-			this.addRun(cards);
-			return true;
+			return this.addRun(cards);
 		} else {
 			return this.increaseRun(cards, runIndex);
 		}
 	}
 
-	private void addRun(CardSet newRun) {
+	private int addRun(CardSet newRun) {
 		this.runs.add(newRun);
+		return this.runs.size()-1;
 	}
 
-	private boolean increaseRun(CardSet additionalCards, int runIndex) {
+	private int increaseRun(CardSet additionalCards, int runIndex) {
 		try {
 			CardSet newRun = this.runs.get(runIndex);
 			newRun.addAll(additionalCards);
 			if (newRun.isLegitRun()) {
 				this.runs.set(runIndex, newRun);
-				return true;
+				return runIndex;
 			}
-			return false;
+			return -1;
 		} catch (IndexOutOfBoundsException e) {
-			return false;
+			return -1;
 		}
 	}
 
@@ -64,6 +64,13 @@ public class Team {
 	}
 
 	public CardSet getRun(int index) {
+		if (index==-1) index = this.runs.size()-1;
 		return this.runs.get(index);
+	}
+
+	public boolean willBurraco(int cards, int runIndex) {
+		if (runIndex==-1 && cards<7) return false;
+		if ((this.runs.get(runIndex).size()+cards)<7) return false;
+		return true;
 	}
 }

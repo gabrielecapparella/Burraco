@@ -19,101 +19,101 @@ class CardSetTest {
 	@Test
 	void listConstructor() {
 		List<Card> clist = new ArrayList<>();
-		clist.add(new Card("0|J"));
+		clist.add(new Card("0J"));
 		CardSet cs = new CardSet(clist);
 		assertEquals(1, cs.size());
-		cs.add(new Card("1|H"));
+		cs.add(new Card("1H"));
 		assertEquals(2, cs.size());
 	}
 
 	@Test
 	void stringConstructor() {
-		CardSet cs = new CardSet("0|J,1|D,2|H");
+		CardSet cs = new CardSet("0J,1D,2H");
 		assertEquals(3, cs.size());
 	}
 
 	@Test
 	void isLegitRun() {
-		assertTrue((new CardSet("3|D,4|D,5|D").isLegitRun()));
-		assertFalse((new CardSet("3|H,4|D,5|D").isLegitRun()));
-		assertFalse((new CardSet("3|D,4|D,5|H").isLegitRun()));
-		assertFalse((new CardSet("3|H,3|D,5|D").isLegitRun()));
-		assertTrue((new CardSet("3|H,3|D,3|S").isLegitRun()));
-		assertTrue((new CardSet("3|H,0|J,3|S").isLegitRun()));
-		assertFalse((new CardSet("3|H,0|J,2|S").isLegitRun()));
-		assertTrue((new CardSet("3|H,0|J,2|H").isLegitRun()));
-		assertTrue((new CardSet("0|J,2|D,1|D,4|D").isLegitRun()));
-		assertTrue((new CardSet("0|J,2|D,1|D").isLegitRun()));
-		assertFalse((new CardSet("0|J,2|D,1|H").isLegitRun()));
-		assertTrue((new CardSet("1|D,12|D,13|D").isLegitRun()));
-		assertTrue((new CardSet("0|J,1|D,13|D").isLegitRun()));
-		assertTrue((new CardSet("0|J,1|D,12|D").isLegitRun()));
-		assertTrue((new CardSet("0|J,1|D,13|D").isLegitRun()));
-		assertFalse((new CardSet("1|D,1|D,2|D,3|D").isLegitRun()));
-		assertTrue((new CardSet("1|D,2|H,3|D").isLegitRun()));
-		assertTrue((new CardSet("4|D,2|H,6|D").isLegitRun()));
-		assertTrue((new CardSet("4|D,0|J,6|D").isLegitRun()));
-		assertFalse((new CardSet("2|D,4|D,0|J,6|D").isLegitRun()));
-		assertFalse((new CardSet("4|D,0|J,7|D").isLegitRun()));
-		assertFalse((new CardSet("2|D,4|D,0|J,6|D,8|D").isLegitRun()));
-		assertFalse((new CardSet("0|J,0|J,0|J").isLegitRun()));
-		assertTrue((new CardSet("2|D,2|H,2|S").isLegitRun()));
-		assertTrue((new CardSet("2|D,1|H,1|S").isLegitRun()));
-		assertTrue((new CardSet("1|D,2|D,2|S").isLegitRun()));
+		assertTrue((new CardSet("3D,4D,5D").isLegitRun()));
+		assertFalse((new CardSet("3H,4D,5D").isLegitRun()));
+		assertFalse((new CardSet("3D,4D,5H").isLegitRun()));
+		assertFalse((new CardSet("3H,3D,5D").isLegitRun()));
+		assertTrue((new CardSet("3H,3D,3S").isLegitRun()));
+		assertTrue((new CardSet("3H,0J,3S").isLegitRun()));
+		assertFalse((new CardSet("3H,0J,2S").isLegitRun()));
+		assertTrue((new CardSet("3H,0J,2H").isLegitRun()));
+		assertTrue((new CardSet("0J,2D,1D,4D").isLegitRun()));
+		assertTrue((new CardSet("0J,2D,1D").isLegitRun()));
+		assertFalse((new CardSet("0J,2D,1H").isLegitRun()));
+		assertTrue((new CardSet("1D,12D,13D").isLegitRun()));
+		assertTrue((new CardSet("0J,1D,13D").isLegitRun()));
+		assertTrue((new CardSet("0J,1D,12D").isLegitRun()));
+		assertTrue((new CardSet("0J,1D,13D").isLegitRun()));
+		assertFalse((new CardSet("1D,1D,2D,3D").isLegitRun()));
+		assertTrue((new CardSet("1D,2H,3D").isLegitRun()));
+		assertTrue((new CardSet("4D,2H,6D").isLegitRun()));
+		assertTrue((new CardSet("4D,0J,6D").isLegitRun()));
+		assertFalse((new CardSet("2D,4D,0J,6D").isLegitRun()));
+		assertFalse((new CardSet("4D,0J,7D").isLegitRun()));
+		assertFalse((new CardSet("2D,4D,0J,6D,8D").isLegitRun()));
+		assertFalse((new CardSet("0J,0J,0J").isLegitRun()));
+		assertTrue((new CardSet("2D,2H,2S").isLegitRun()));
+		assertTrue((new CardSet("2D,1H,1S").isLegitRun()));
+		assertTrue((new CardSet("1D,2D,2S").isLegitRun()));
 	}
 
 	@Test
 	void countPoints() {
 		CardSet cs;
-		cs = new CardSet("3|D,4|D,5|D");
+		cs = new CardSet("3D,4D,5D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(15, cs.countPoints());
 
-		cs = new CardSet("1|D,12|D,13|D");
+		cs = new CardSet("1D,12D,13D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(35, cs.countPoints());
 
-		cs = new CardSet("1|D,2|H,13|D");
+		cs = new CardSet("1D,2H,13D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(45, cs.countPoints());
 
-		cs = new CardSet("1|D,2|D,3|D,4|D,5|D,6|D,7|D");
+		cs = new CardSet("1D,2D,3D,4D,5D,6D,7D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(260, cs.countPoints());
 
-		cs = new CardSet("1|D,2|H,3|D,4|D,5|D,6|D,7|D");
+		cs = new CardSet("1D,2H,3D,4D,5D,6D,7D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(160, cs.countPoints());
 
-		cs = new CardSet("1|D,2|H,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		cs = new CardSet("1D,2H,3D,4D,5D,6D,7D,8D,9D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(230, cs.countPoints());
 
-		cs = new CardSet("1|D,2|D,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		cs = new CardSet("1D,2D,3D,4D,5D,6D,7D,8D,9D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(280, cs.countPoints());
 
-		cs = new CardSet("1|D,2|D,3|D,4|D,5|D,0|J,7|D,8|D,9|D");
+		cs = new CardSet("1D,2D,3D,4D,5D,0J,7D,8D,9D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(205, cs.countPoints());
 
-		cs = new CardSet("2|D,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		cs = new CardSet("2D,3D,4D,5D,6D,7D,8D,9D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(265, cs.countPoints());
 
-		cs = new CardSet("2|H,3|D,4|D,5|D,6|D,7|D,8|D,9|D");
+		cs = new CardSet("2H,3D,4D,5D,6D,7D,8D,9D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(215, cs.countPoints());
 
-		cs = new CardSet("2|D,8|D,9|D,10|D,11|D,12|D,13|D,1|D");
+		cs = new CardSet("2D,8D,9D,10D,11D,12D,13D,1D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(245, cs.countPoints());
 
-		cs = new CardSet("2|D,9|D,10|D,11|D,12|D,13|D,1|D");
+		cs = new CardSet("2D,9D,10D,11D,12D,13D,1D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(185, cs.countPoints());
 
-		cs = new CardSet("8|D,9|D,10|D,11|D,2|D,13|D,1|D");
+		cs = new CardSet("8D,9D,10D,11D,2D,13D,1D");
 		assertTrue(cs.isLegitRun());
 		assertEquals(185, cs.countPoints());
 	}

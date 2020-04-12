@@ -64,7 +64,10 @@ public class Game {
 			if (s==Suits.J) {
 				for(int i = 0; i<4; i++) this.deck.add(new Card(0, s));
 			} else {
-				for(int i = 1; i<=13; i++) this.deck.add(new Card(i, s));
+				for(int i = 1; i<=13; i++) {
+					this.deck.add(new Card(i, s));
+					this.deck.add(new Card(i, s));
+				}
 			}
 		}
 		Collections.shuffle(this.deck);
