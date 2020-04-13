@@ -54,30 +54,33 @@ public class Player {
 				return;
 			}
 		}
-		if (runIndex<0 && !cs.isLegitRun()) { // new run
-			this.sendMessage(new Message(MsgType.CHAT, "Player", "Not a valid run."));
-			return;
-		}
-		boolean willPot = cs.size()==this.hand.size();
-		boolean willBurraco = this.team.willBurraco(cs.size(), runIndex);
-		if(willPot && this.team.potTaken && !willBurraco) {
+		boolean willEmpty = cs.size()==this.hand.size();
+		boolean willClose = cs.size()==(this.hand.size()+1);
+		boolean couldBurraco = this.team.willBurraco(cs.size(), runIndex);
+		boolean hasBurraco = this.team.hasBurraco();
+		if (willEmpty && this.team.potTaken) {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot remain without cards."));
 			return;
 		}
+		if (willClose && this.team.potTaken && this.hand.difference(cs).get(0).wildcard) {
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot close with a wildcard."));
+		}
+		if (willClose && this.team.potTaken && !couldBurraco && !hasBurraco) {
+			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot close yet."));
+		}
+
 		runIndex = this.team.meld(cs, runIndex);
 		if (runIndex<0) {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "Not a valid run."));
 			return;
 		}
 
-		for (Card c: cs) { // .removeAll() would remove duplicates too
-			this.hand.remove(c);
-		}
+		this.hand = this.hand.difference(cs);
 
 		CardSet newRun = this.team.getRun(runIndex);
 		this.game.broadcast(new Message(MsgType.MELD, this.id, runIndex+";"+newRun.toString()));
 
-		if (willPot) {
+		if (willEmpty) {
 			this.setHand(this.team.getPot()); // the setter notifies the client
 			this.game.broadcast(new Message(MsgType.POT, this.id, null));
 		}
@@ -97,15 +100,15 @@ public class Player {
 		this.hand.remove(c);
 		this.game.discard(this, c);
 		this.game.broadcast(new Message(MsgType.DISCARD, this.id, c.toString()));
+		this.setTurn(Turn.NOPE);
 
 		if (willEmpty && !this.team.potTaken) {
 			this.setHand(this.team.getPot()); // the setter notifies the client
 			this.game.broadcast(new Message(MsgType.POT, this.id, null));
-		} else if (willEmpty && this.team.canClose()){
+		} else if (willEmpty && this.team.potTaken){
 			this.team.points += 100;
 			this.game.closeRound();
 		}
-		this.setTurn(Turn.NOPE);
 	}
 
 	public void payHandPoints() {

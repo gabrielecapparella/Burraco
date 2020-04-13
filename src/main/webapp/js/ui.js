@@ -1,8 +1,7 @@
 const CARD_WIDTH = 70;
 const HALF_CARD_WIDTH = 20;
 let ui;
-// TODO: when the player "drop" a card somewhere which is not his hand
-// ui should remove selected-card class
+
 class BurracoUI {
 	constructor(numPlayers, web_socket) {
 		ui = this;
@@ -84,12 +83,12 @@ class BurracoUI {
 	}
 
 	action_draw() {
-		let msg = JSON.stringify({"type":"DRAW", "sender":null, "content":null});
+		let msg = ui.create_msg("DRAW", null, null);
 		ui.webSocket.send(msg);
 	}
 
 	action_pick() {
-		let msg = JSON.stringify({"type":"PICK", "sender":null, "content":null});
+		let msg = ui.create_msg("PICK", null, null);
 		ui.webSocket.send(msg);
 	}
 
@@ -126,7 +125,7 @@ class BurracoUI {
 			if (card.length!=1) return;
 		}
 		card = card.attr("data-value");
-		let msg = JSON.stringify({"type":"DISCARD", "sender":null, "content":card});
+		let msg = ui.create_msg("DISCARD", null, card);
 		ui.webSocket.send(msg);
 		$(".moving").removeClass("moving");
 	}
@@ -172,7 +171,7 @@ class BurracoUI {
 
 		let run_div = $(where+' > div[data-index="'+run_index+'"]');
 		if (who_id!=this.id) {
-			this.cardsInOtherHands[who_id] -= (cards.length-run_div.length);
+			this.cardsInOtherHands[who_id] -= (cards.length-run_div.children().length);
 			this.display_other_hand(who_id);
 		}
 		if (!run_div.length) {
@@ -330,8 +329,6 @@ class BurracoUI {
 		return JSON.stringify({"type":type, "sender":sender, "content":content});
 	}
 }
-
-
 
 $(function() {
 	// display_run("#my-runs", "1;CLEAN;1D,2D,3D,4D,5D,6D,7D");

@@ -1,16 +1,27 @@
 package it.gabrielecapparella.burraco;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
 	private CardSet pot;
 	private List<CardSet> runs;
-	public boolean potTaken = false;
-	public int points = 0;
+	private List<Integer> pointsHistory = new ArrayList<>();
+	public int points; // current round
+	public int totalPoints;
+	public boolean potTaken;
 
-	public boolean canClose() {
-		if (!potTaken) return false;
+	public void newRound(CardSet pot) {
+		this.runs = new ArrayList<>();
+		this.pot = pot;
+		this.potTaken = false;
+		this.points = 0;
+		this.totalPoints = 0;
+	}
+
+	public boolean hasBurraco() {
 		for (CardSet r: this.runs) {
 			if (r.size()>=7) return true;
 		}
@@ -26,13 +37,14 @@ public class Team {
 	}
 
 	private int addRun(CardSet newRun) {
+		if (!newRun.isLegitRun()) return -1;
 		this.runs.add(newRun);
 		return this.runs.size()-1;
 	}
 
 	private int increaseRun(CardSet additionalCards, int runIndex) {
 		try {
-			CardSet newRun = this.runs.get(runIndex);
+			CardSet newRun = new CardSet(this.runs.get(runIndex));
 			newRun.addAll(additionalCards);
 			if (newRun.isLegitRun()) {
 				this.runs.set(runIndex, newRun);
@@ -49,13 +61,16 @@ public class Team {
 			this.points += run.countPoints();
 		}
 		if (!this.potTaken) this.points -= 100;
-		return this.points;
+		this.pointsHistory.add(this.points);
+		this.totalPoints += this.points;
+		return this.totalPoints;
 	}
 
-	public void newRound(CardSet pot) {
-		this.runs = new ArrayList<>();
-		this.pot = pot;
-		this.potTaken = false;
+	public String getReport() {
+		JSONObject jo = new JSONObject();
+		jo.put("history", this.pointsHistory);
+		jo.put("total", this.totalPoints);
+		return jo.toString();
 	}
 
 	public CardSet getPot() {

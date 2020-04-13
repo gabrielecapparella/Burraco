@@ -37,14 +37,14 @@ public class CardSet extends ArrayList<Card>{
 		if(this.runType==RunType.GROUP) isLegit = this.isLegitGroup();
 		else isLegit = this.isLegitSequence();
 
-		if (isLegit) this.burType = this.getBuracoType();
+		if (isLegit) this.burType = this.getBurracoType();
 
 		return isLegit;
 	}
 
 	private RunType inferType() {
 		if (get(0).num==get(1).num && get(1).num==get(2).num) return RunType.GROUP; //xxx
-		if (get(0).wildcard && get(1).num==get(2).num) return RunType.GROUP; //jxx
+		if (get(0).wildcard && get(1).num==last().num) return RunType.GROUP; //jxx
 		return RunType.SEQUENCE;
 	}
 
@@ -72,7 +72,10 @@ public class CardSet extends ArrayList<Card>{
 				continue;
 			}
 			if (curr.suit!=seqSuit) return false; // not consistent suits
-			if (curr.num==1 && run[1]!=null) run[14] = curr; // double ace over K
+			if (curr.num==1 && run[1]!=null) {
+				run[14] = curr; // double ace over K
+				continue;
+			}
 			if (run[curr.num]!=null) return false; // double card
 			else run[curr.num] = curr;
 		}
@@ -126,7 +129,7 @@ public class CardSet extends ArrayList<Card>{
 		return points;
 	}
 
-	private BuracoType getBuracoType() {
+	private BuracoType getBurracoType() {
 		if (super.size()<7) return BuracoType.NONE;
 		int adjCards = 1;
 		Card curr;
@@ -142,6 +145,14 @@ public class CardSet extends ArrayList<Card>{
 			}
 		}
 		return BuracoType.CLEAN;
+	}
+
+	public CardSet difference(CardSet that) {
+		CardSet diff = new CardSet(this);
+		for (Card c: that) {
+			diff.remove(c);
+		}
+		return diff;
 	}
 
 	@Override

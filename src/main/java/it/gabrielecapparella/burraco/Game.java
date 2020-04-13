@@ -113,25 +113,41 @@ public class Game {
 		return picked;
 	}
 
+	public void closeGame() {
+		this.closeRound(true);
+	}
+
 	public void closeRound() {
+		this.closeRound(false);
+	}
+
+	private void closeRound(boolean closeGame) {
 		for (Player p: this.players) {
 			p.payHandPoints();
 		}
+
 		int p1 = this.team1.countRoundPoints();
 		int p2 = this.team2.countRoundPoints();
-		if ((p1>=this.targetPoints || p2>=this.targetPoints) && p1!=p2) { // someone won
-			this.broadcast(new Message(MsgType.END_GAME, "Game", p1+","+p2));
-		} else {
-			this.broadcast(new Message(MsgType.END_ROUND, "Game", p1+","+p2));
-			this.setupTable();
+		String winner = null;
+		if (p1>=this.targetPoints && p1>p2) {
+			winner = "team1";
+		} else if(p2>=this.targetPoints && p2>p1) {
+			winner = "team2";
 		}
-	}
 
-	public void closeGame() {
-		this.isRunning = false;
-		int p1 = this.team1.points;
-		int p2 = this.team2.points;
-		this.broadcast(new Message(MsgType.END_GAME, "Game", p1+","+p2));
+		JSONObject round_report = new JSONObject();
+		round_report.put("team1", this.team1.getReport());
+		round_report.put("team2", this.team2.getReport());
+		round_report.put("winner", winner);
+
+		MsgType msg_type = MsgType.END_ROUND;
+		if(winner!=null) {
+			msg_type = MsgType.END_GAME;
+			this.isRunning = false;
+		}
+		this.broadcast(new Message(msg_type, "Game", round_report.toString()));
+
+		if(winner==null && !closeGame) this.setupTable();
 	}
 
 	public String getDescription() {

@@ -10,13 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class CardSetTest {
 
 	@Test
-	void emptyConstructor() {
-		CardSet cs = new CardSet();
-		assertEquals(cs.toString(), "");
-		assertEquals(0, cs.size());
-	}
-
-	@Test
 	void listConstructor() {
 		List<Card> clist = new ArrayList<>();
 		clist.add(new Card("0J"));
@@ -60,6 +53,7 @@ class CardSetTest {
 		assertTrue((new CardSet("2D,2H,2S").isLegitRun()));
 		assertTrue((new CardSet("2D,1H,1S").isLegitRun()));
 		assertTrue((new CardSet("1D,2D,2S").isLegitRun()));
+		assertTrue((new CardSet("1D,2D,3D,4D,5D,6D,7D,8D,9D,10D,11D,12D,13D,1D").isLegitRun()));
 	}
 
 	@Test
