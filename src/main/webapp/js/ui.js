@@ -1,5 +1,5 @@
-const CARD_WIDTH = 70;
-const HALF_CARD_WIDTH = 20;
+const CARD_WIDTH = 77;
+const HALF_CARD_WIDTH = 25;
 let ui;
 
 class BurracoUI {
@@ -28,8 +28,13 @@ class BurracoUI {
 		for (let p in this.player2seat) {
 			if (p!=this.id) {
 				this.cardsInOtherHands[p] = 11;
+				this.display_other_hand(p);
 			}
 		}
+/*		let cards = "1D,2D,3D,4D,5D,6D,7D".split(",");
+		this.display_run("0", ["0", cards, "CLEAN"]);
+		this.display_run("0", ["1", cards, "SEMICLEAN"]);
+		this.display_run("0", ["2", cards, "DIRTY"]);*/
 	}
 
 	set_turn(t) {
@@ -182,13 +187,13 @@ class BurracoUI {
 		let c_class;
 		for (let i = cards.length-1; i>=0; i--) {
 			if (i==1 && (bur_type=="CLEAN" || bur_type=="SEMICLEAN")) {
-				c_class = "half-horiz-overflow";
+				c_class = "run-horiz-overflow";
 			} else if(i==0 && (bur_type=="CLEAN" || bur_type=="DIRTY")) {
-				c_class = "horiz";
+				c_class = "run-horiz";
 			} else if(i==0 && (bur_type=="NONE" || bur_type=="SEMICLEAN")) {
 				c_class = "card";
 			} else {
-				c_class = "half-card";
+				c_class = "run-half";
 			}
 			run_html += '<div class="'+c_class+'"><img src="/cards/'+cards[i]+'.jpg"></div>';
 		}
@@ -208,7 +213,7 @@ class BurracoUI {
 		let to_display = Math.ceil(this.cardsInDeck/7);
 		let result = '<div class="card"><img src="/cards/back.jpg"></div>';
 		for (let i=1; i<to_display; i++) {
-			result += '<div class="half-deck"><img src="/cards/back.jpg"></div>';
+			result += '<div class="deck-half"><img src="/cards/back.jpg"></div>';
 		}
 		$("#deck").html(result);
 	}
@@ -219,20 +224,20 @@ class BurracoUI {
 		if (discard_len > 0) {
 			let i;
 			for (i = 0; i < this.discardPile.length - 1; i++) {
-				result += '<div class="half-discard"><img src="/cards/' + this.discardPile[i] + '.jpg"></div>';
+				result += '<div class="discard-half"><img src="/cards/'+this.discardPile[i]+'.jpg"></div>';
 			}
-			result += '<div class="card"><img src="/cards/' + this.discardPile[i] + '.jpg"></div>';
+			result += '<div class="card"><img src="/cards/'+this.discardPile[i]+'.jpg"></div>';
 		}
 		$("#discard").html(result);
 
 	}
 
 	discard_open() {
-		$("#discard > .half-discard").removeClass("half-discard").addClass("half-card");
+		$("#discard > .discard-half").removeClass("discard-half").addClass("run-half");
 	}
 
 	discard_close() {
-		$("#discard > .half-card").removeClass("half-card").addClass("half-discard");
+		$("#discard > .run-half").removeClass("run-half").addClass("discard-half");
 	}
 
 	display_hand() { // TODO: check if can be merged with display_other_hand
@@ -241,9 +246,9 @@ class BurracoUI {
 		let card_class;
 		for (let i = 0; i<this.hand.length; i++) {
 			if ((i+1)%per_row==0 || i==this.hand.length-1) {
-				card_class = "hand-card";
+				card_class = "my-hand";
 			} else {
-				card_class = "hand-half";
+				card_class = "my-hand-half";
 			}
 			hand_html += '<div class="'+card_class+'"><img src="/cards/'+this.hand[i]+'.jpg" data-value="'+this.hand[i]+'"></div>';
 		}
@@ -273,18 +278,18 @@ class BurracoUI {
 		if (seat=="north") {
 			let hand = '';
 			for (let i=0; i<num_cards-1; i++) {
-				hand += '<div class="hand-half hand-back"><img src="/cards/back.jpg"></div>';
+				hand += '<div class="north-hand-half"><img src="/cards/back.jpg"></div>';
 			}
-			hand += '<div class="hand-card hand-back"><img src="/cards/back.jpg"></div>';
+			hand += '<div class="north-hand"><img src="/cards/back.jpg"></div>';
 			$("#north").html(hand);
-		} else if (seat=="west") {
+		} else if (seat=="west") { // TODO
 			let hand = '';
 			for (let i=0; i<num_cards-1; i++) {
 				hand += '<div class="hand-half-back-horiz hand-west"><img src="/cards/back.jpg"></div>';
 			}
 			hand += '<div class="hand-back-horiz hand-west"><img src="/cards/back.jpg"></div>';
 			$("#west").html(hand);
-		} else if (seat=="east") {
+		} else if (seat=="east") {// TODO
 			let hand = '';
 			for (let i=0; i<num_cards-1; i++) {
 				hand += '<div class="hand-half-back-horiz"><img src="/cards/back.jpg"></div>';

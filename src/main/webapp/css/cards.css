@@ -1,94 +1,134 @@
+:root {
+	--card-img-w: 68px;
+	--card-img-h: 102px;
+
+	--card-w: calc(var(--card-img-w) + 2px);
+	--card-h: calc(var(--card-img-h) + 2px);
+
+	--my-hand-proportion: 1.25;
+
+	--my-hand-w: calc(var(--card-w) * var(--my-hand-proportion));
+	--img-my-hand-w: calc(var(--card-w) * var(--my-hand-proportion));
+	--img-my-hand-h: calc(var(--card-h) * var(--my-hand-proportion));
+	--my-hand-h: 35px;
+	--my-hand-half-w: 20px;
+
+	--other-hand-w: var(--card-w);
+	--other-hand-h: 20px;
+	--other-hand-half-w: 20px;
+
+	--deck-half-h: 2px;
+	--discard-half-h: 5px;
+
+	--horiz-half-h: 12px;
+}
+
 img {
-	width: 68px;
-	height: 102px;
+	width: var(--card-img-w);
+	height: var(--card-img-h);
 	flex-shrink: 0;
 	border:1px solid black;
 	z-index: 0;
 }
 
-.card {}
-
-.half-card {
-	width: 70px;
-	height: 20px;
+div {
 	overflow:hidden;
 }
 
-.half-discard {
-	width: 70px;
-	height: 5px;
-	overflow: hidden;
+.card { /* deck, discard, run */
+	width: var(--card-w);
+	height: var(--card-h);
 }
 
-.half-deck {
-	width: 70px;
-	height: 3px;
-	overflow: hidden;
+.my-hand {
+	width: var(--my-hand-w);
+	height: var(--my-hand-h);
 }
 
-.half-deck > img{
+.my-hand-half {
+	width: var(--my-hand-half-w);
+	height: var(--my-hand-h);
+}
+
+.my-hand > img, .my-hand-half > img {
+	width: var(--img-my-hand-w);
+	height: var(--img-my-hand-h);
+}
+
+.north-hand {
+	width: var(--other-hand-w);
+	height: var(--other-hand-h);
+}
+
+.north-hand-half {
+	width: var(--other-hand-half-w);
+	height: var(--other-hand-h);
+}
+
+.north-hand > img, .north-hand-half > img {
 	position: relative;
-	margin: -101px 0;
+	margin: calc(var(--other-hand-h) - var(--card-h)) 0;
 }
 
-.hand-card {
-	width: 70px;
-	height: 30px;
-	overflow:hidden;
+.west-hand {
+	width: var(--other-hand-h);
+	height: var(--other-hand-w);
 }
 
-.hand-half {
-	width: 20px;
-	height: 30px;
-	overflow: hidden;
+.west-hand-half {
+	width: var(--other-hand-h);
+	height: var(--other-hand-half-w);
 }
 
-.hand-back > img{
+.east-hand {
+	width: var(--other-hand-h);
+	height: var(--other-hand-w);
+}
+
+.east-hand-half {
+	width: var(--other-hand-h);
+	height: var(--other-hand-half-w);
+}
+
+.deck-half {
+	width: var(--card-w);
+	height: var(--deck-half-h);
+}
+
+.deck-half > img{
 	position: relative;
-	margin: -74px 0;
+	margin: calc(var(--deck-half-h) - var(--card-h)) 0;
 }
 
-.hand-back-horiz {
-	width: 30px;
-	height: 70px;
-	overflow: hidden;
+.discard-half {
+	width: var(--card-w);
+	height: var(--discard-half-h);
 }
 
-.hand-half-back-horiz {
-	width: 30px;
+.run-half {
+	width: var(--card-w);
 	height: 20px;
-	overflow: hidden;
 }
 
-.hand-back-horiz > img, .hand-half-back-horiz > img {
-	transform-origin: 52px center;
+.run-horiz {
+	width: var(--card-h);
+	height: var(--card-w);
+}
+
+.run-horiz-half {
+	width: var(--card-h);
+	height: var(--horiz-half-h);
+}
+
+.run-horiz-overflow {
+	width: var(--card-h);
+	height: var(--horiz-half-h);
+	overflow: visible;
+}
+
+.run-horiz > img, .run-horiz-half > img,  .run-horiz-overflow > img{
+	transform-origin: calc(var(--card-h) / 2) center;
 	transform: rotate(90deg);
-}
-
-.hand-west > img {
-	position: relative;
-	margin: 0 -74px;
-}
-
-.horiz {
-	width: 104px;
-	height: 70px;
-}
-
-.horiz > img, .half-horiz > img,  .half-horiz-overflow > img{
-	transform-origin: 52px center;
-	transform: rotate(90deg);
-}
-
-.half-horiz {
-	width: 104px;
-	height: 12px;
-	overflow: hidden;
-}
-
-.half-horiz-overflow {
-	width: 104px;
-	height: 12px;
 }
 
 .selected-card {
