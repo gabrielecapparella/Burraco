@@ -33,7 +33,7 @@ function main(game_info) {
 				break;
 			case "START_ROUND":
 				let discard = decode_cardset(msg["content"])[0];
-				burracoUI.set_discardPile(discard);
+				burracoUI.set_discard_pile(discard);
 				burracoUI.startGame();
 				break;
 			case "HAND": // private
@@ -46,8 +46,6 @@ function main(game_info) {
 				}
 				break;
 			case "DRAW":
-				burracoUI.cardsInDeck -= 1;
-				burracoUI.display_deck();
 				if (msg["sender"]=="Player") {
 					let card = msg["content"];
 					burracoUI.draw_card(card);
@@ -60,9 +58,10 @@ function main(game_info) {
 				burracoUI.pick(who);
 				break;
 			case "MELD":
+				who = msg["sender"];
 				let run = decode_run(msg["content"]);
-				if (msg["sender"]==playerId) burracoUI.meld_hand_remove(run[0], run[1]);
-				burracoUI.display_run(msg["sender"], run);
+				burracoUI.meld_hand_remove(who, run[0], run[1]);
+				burracoUI.set_run(who, run);
 				break;
 			case "DISCARD":
 				let card = msg["content"];
@@ -78,7 +77,7 @@ function main(game_info) {
 				// TODO
 				break;
 			case "CHAT":
-				burracoUI.display_chat(msg["sender"], msg["content"]);
+				display_chat(msg["sender"], msg["content"]);
 				break;
 		}
 	}

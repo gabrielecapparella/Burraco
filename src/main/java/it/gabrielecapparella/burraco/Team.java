@@ -84,7 +84,7 @@ public class Team {
 	}
 
 	public boolean willBurraco(int cards, int runIndex) {
-		if (runIndex==-1 && cards<7) return false;
+		if (runIndex==-1) return cards>=7;
 		if ((this.runs.get(runIndex).size()+cards)<7) return false;
 		return true;
 	}
