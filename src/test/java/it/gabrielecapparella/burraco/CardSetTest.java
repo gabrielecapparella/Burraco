@@ -112,4 +112,14 @@ class CardSetTest {
 		assertEquals(185, cs.countPoints());
 	}
 
+	@Test
+	void difference() {
+		CardSet cs_1 = new CardSet("9H,2S,10H,0J");
+		CardSet cs_2 = new CardSet("9H,2S,10H");
+		CardSet cs_actual = cs_1.difference(cs_2);
+		CardSet cs_expected = new CardSet("0J");
+
+		assertEquals(cs_expected, cs_actual);
+		assertTrue(cs_actual.get(0).wildcard);
+	}
 }

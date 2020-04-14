@@ -1,5 +1,5 @@
 const CARD_WIDTH = 77;
-const HALF_CARD_WIDTH = 25;
+const HALF_CARD_WIDTH = 20;
 
 function card(css_class, value) {
 	return '<div class='+css_class+'><img src="/cards/'+value+'.jpg" data-value="'+value+'"></div>';

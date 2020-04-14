@@ -10,7 +10,7 @@ public class Team {
 	private List<CardSet> runs;
 	private List<Integer> pointsHistory = new ArrayList<>();
 	public int points; // current round
-	public int totalPoints;
+	public int totalPoints = 0;
 	public boolean potTaken;
 
 	public void newRound(CardSet pot) {
@@ -18,7 +18,6 @@ public class Team {
 		this.pot = pot;
 		this.potTaken = false;
 		this.points = 0;
-		this.totalPoints = 0;
 	}
 
 	public boolean hasBurraco() {

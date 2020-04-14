@@ -55,7 +55,7 @@ public class Player {
 			}
 		}
 		boolean willEmpty = cs.size()==this.hand.size();
-		boolean willClose = cs.size()==(this.hand.size()+1);
+		boolean willClose = cs.size()==(this.hand.size()-1);
 		boolean couldBurraco = this.team.willBurraco(cs.size(), runIndex);
 		boolean hasBurraco = this.team.hasBurraco();
 		if (willEmpty && this.team.potTaken) {
@@ -64,9 +64,11 @@ public class Player {
 		}
 		if (willClose && this.team.potTaken && this.hand.difference(cs).get(0).wildcard) {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot close with a wildcard."));
+			return;
 		}
 		if (willClose && this.team.potTaken && !couldBurraco && !hasBurraco) {
 			this.sendMessage(new Message(MsgType.CHAT, "Player", "Cannot close yet."));
+			return;
 		}
 
 		runIndex = this.team.meld(cs, runIndex);
