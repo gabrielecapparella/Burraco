@@ -17,6 +17,9 @@ class BurracoUI {
 			.on("mouseleave", this.discard_close);
 		$("#main").on("dragover", function(e) {e.preventDefault();})
 			.on("drop", function() {$(".moving").removeClass("moving")});
+
+		display_other_hand("west", 11);
+		display_other_hand("east", 11);
 	}
 
 	startGame() {

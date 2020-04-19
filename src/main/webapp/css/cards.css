@@ -65,9 +65,15 @@ div {
 	height: var(--other-hand-h);
 }
 
-.north-hand > img, .north-hand-half > img {
+.north-hand > img {
 	position: relative;
 	margin: calc(var(--other-hand-h) - var(--card-h)) 0;
+}
+
+.north-hand-half > img {
+	position: relative;
+	margin-top: calc(var(--other-hand-h) - var(--card-h));
+	margin-left: calc(var(--other-hand-half-w) - var(--card-w));
 }
 
 .west-hand {
@@ -80,6 +86,13 @@ div {
 	height: var(--other-hand-half-w);
 }
 
+.west-hand > img, .west-hand-half > img {
+	transform-origin: calc(var(--card-h) / 2) center;
+	transform: rotate(90deg);
+	position: relative;
+	margin: 0 calc(var(--other-hand-h) - var(--card-h));
+}
+
 .east-hand {
 	width: var(--other-hand-h);
 	height: var(--other-hand-w);
@@ -88,6 +101,19 @@ div {
 .east-hand-half {
 	width: var(--other-hand-h);
 	height: var(--other-hand-half-w);
+}
+
+.east-hand > img {
+	transform-origin: calc(var(--card-h) / 2) center;
+	transform: rotate(90deg);
+	position: relative;
+}
+
+.east-hand-half > img {
+	transform-origin: calc(var(--card-h) / 2) center;
+	transform: rotate(90deg);
+	position: relative;
+	margin: calc(var(--other-hand-h) - var(--card-w)) 0;
 }
 
 .deck-half {

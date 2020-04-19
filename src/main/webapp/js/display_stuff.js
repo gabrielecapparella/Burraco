@@ -17,29 +17,38 @@ function display_deck(num_cards) {
 function display_discard(cards) {
 	let result = "";
 	let discard_len = cards.length;
+	let discard_div = $("#discard");
 	if (discard_len > 0) {
 		let i;
 		for (i = 0; i < discard_len-1; i++) {
 			result += card("discard-half", cards[i]);
 		}
 		result += card("card", cards[i]);
+		discard_div.removeClass("border");
+	} else {
+		discard_div.addClass("border");
 	}
-	$("#discard").html(result);
+	discard_div.html(result);
 }
 
 function display_hand(cards) { // TODO: check if can be merged with display_other_hand
 	let hand_html = '';
 	let per_row = 1+ Math.floor(($("#south").width()-CARD_WIDTH)/HALF_CARD_WIDTH);
-	let card_class;
-	for (let i = 0; i<cards.length; i++) {
+	let south_div = $("#south");
+	let cards_len = cards.length;
+
+	if (cards_len>per_row) south_div.addClass("south-double-row");
+	else south_div.removeClass("south-double-row")
+
+	for (let i = 0; i<cards_len; i++) {
 		if ((i+1)%per_row==0 || i==cards.length-1) {
-			card_class = "my-hand";
+			hand_html += card("my-hand", cards[i]);
 		} else {
-			card_class = "my-hand-half";
+			hand_html += card("my-hand-half", cards[i]);
 		}
-		hand_html += card(card_class, cards[i]);
 	}
-	$("#south").html(hand_html);
+	south_div.html(hand_html);
+
 
 }
 
@@ -51,19 +60,19 @@ function display_other_hand(where, num_cards) {
 		}
 		hand += card("north-hand", "back");
 		$("#north").html(hand);
-	} else if (where=="west") { // TODO
+	} else if (where=="west") {
 		let hand = '';
 		for (let i=0; i<num_cards-1; i++) {
-			hand += '<div class="hand-half-back-horiz hand-west"><img src="/cards/back.jpg"></div>';
+			hand += card("west-hand-half", "back");
 		}
-		hand += '<div class="hand-back-horiz hand-west"><img src="/cards/back.jpg"></div>';
+		hand += card("west-hand", "back");
 		$("#west").html(hand);
-	} else if (where=="east") {// TODO
+	} else if (where=="east") {
 		let hand = '';
 		for (let i=0; i<num_cards-1; i++) {
-			hand += '<div class="hand-half-back-horiz"><img src="/cards/back.jpg"></div>';
+			hand += card("east-hand-half", "back");
 		}
-		hand += '<div class="hand-back-horiz"><img src="/cards/back.jpg"></div>';
+		hand += card("east-hand", "back");
 		$("#east").html(hand);
 	}
 }
