@@ -26,9 +26,8 @@ function main(game_info) {
 				if (msg["sender"]=="Player") {
 					playerId = parseInt(msg["content"]);
 					burracoUI.set_id(playerId);
-					// display stuff
 				} else {
-					// display other stuff
+					burracoUI.somebody_joined(parseInt(msg["content"]));
 				}
 				break;
 			case "START_ROUND":
@@ -41,9 +40,11 @@ function main(game_info) {
 				burracoUI.set_hand(hand);
 				break;
 			case "TURN":
-				if (msg["sender"]==playerId) {
+				who = msg["sender"];
+				if (who==playerId) {
 					burracoUI.set_turn(msg["content"]);
 				}
+				display_turn(burracoUI.player2seat[who], msg["content"]);
 				break;
 			case "DRAW":
 				if (msg["sender"]=="Player") {
@@ -77,7 +78,7 @@ function main(game_info) {
 				// TODO
 				break;
 			case "CHAT":
-				display_chat(msg["sender"], msg["content"]);
+				display_chat_msg(burracoUI.player2name[msg["sender"]], msg["content"]);
 				break;
 		}
 	}

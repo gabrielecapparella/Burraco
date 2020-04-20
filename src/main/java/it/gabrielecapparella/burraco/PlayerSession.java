@@ -32,7 +32,6 @@ public class PlayerSession {
 	@OnMessage
 	public void onMessage(Message msg, Session session) {
 		System.out.println(msg.toString());
-		String pot;
 		switch (msg.type) {
 			case DRAW:
 				this.player.drawCard();
@@ -49,6 +48,9 @@ public class PlayerSession {
 			case DISCARD:
 				Card c = new Card(msg.content);
 				this.player.discard(c);
+				break;
+			case CHAT:
+				this.game.broadcast(msg);
 				break;
 			case EXIT:// TODO may use onClose instead
 				break;

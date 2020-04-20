@@ -12,11 +12,37 @@ class BurracoUI {
 		this.turnPhase = "NOPE";
 		this.myRuns = [];
 		this.otherRuns = [];
+		this.player2name = ["carbonara", "amatriciana", "caciopepe", "boscaiola"];
+		// TODO: populate player2name on JOIN events and initial state
 
 		$("#discard").on("mouseenter", this.discard_open)
 			.on("mouseleave", this.discard_close);
 		$("#main").on("dragover", function(e) {e.preventDefault();})
 			.on("drop", function() {$(".moving").removeClass("moving")});
+
+		$("#points-button").on("mouseenter", function() {
+			$("#points").show();
+		});
+		$("#points").on("mouseleave", function() {
+			$("#points").hide();
+		});
+
+		$("#chat-button").on("mouseenter", function() {
+			$("#chat").show();
+			$("#chat-button").removeClass("chat-new-msg");
+
+		});
+		$("#chat").on("mouseleave", function() {
+			$("#chat").hide();
+		});
+
+		$("#chat-send").on("click", this.action_send_msg);
+
+		$( "#chat-msg > input" ).on("keypress", function( event ) {
+			if ( event.key == 'Enter' ) {
+				ui.action_send_msg();
+			}
+		});
 
 		display_other_hand("west", 11);
 		display_other_hand("east", 11);
@@ -38,6 +64,11 @@ class BurracoUI {
 				this.display_run("0", ["0", cards, "CLEAN"]);
 				this.display_run("0", ["1", cards, "SEMICLEAN"]);
 				this.display_run("0", ["2", cards, "DIRTY"]);*/
+	}
+
+	somebody_joined(who_id) {
+		display_badge(this.player2seat[who_id], this.player2name[who_id]);
+		display_chat_msg("Info", this.player2name[who_id]+" just joined.");
 	}
 
 	set_turn(t) {
@@ -159,6 +190,13 @@ class BurracoUI {
 		let msg = ui.create_msg("DISCARD", null, card);
 		ui.webSocket.send(msg);
 		$(".moving").removeClass("moving");
+	}
+
+	action_send_msg() {
+		let input = $("#chat-msg > input");
+		let msg = ui.create_msg("CHAT", ui.id, input.val());
+		ui.webSocket.send(msg);
+		input.val("");
 	}
 
 	draw_card(card) {

@@ -48,8 +48,6 @@ function display_hand(cards) { // TODO: check if can be merged with display_othe
 		}
 	}
 	south_div.html(hand_html);
-
-
 }
 
 function display_other_hand(where, num_cards) {
@@ -102,7 +100,29 @@ function display_run(where, run) {
 	return run_div;
 }
 
-function display_chat(who, msg) {
-	// TODO
+function display_badge(where, username) {
+	let badge = "#"+where+"-badge";
+	$(badge+" > .badge-name").html(username);
+	//TODO
+	$(badge).show();
+}
+
+function display_turn(where, turn_phase) {
+	let name_div = $("#"+where+"-badge > .badge-name");
+	switch (turn_phase) {
+		case "TAKE":
+			name_div.addClass("his-turn");
+			break;
+		case "NOPE":
+			name_div.removeClass("his-turn");
+			break;
+	}
+}
+
+function display_chat_msg(who, msg) {
+	let chat_text_div = $("#chat-text")
+	chat_text_div.append(who+": "+msg+"<br>");
+	chat_text_div.scrollTop(chat_text_div.prop("scrollHeight"));
+	if ($("#chat").is(":hidden")) $("#chat-button").addClass("chat-new-msg");
 }
 
