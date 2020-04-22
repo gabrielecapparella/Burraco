@@ -146,8 +146,15 @@ div { display: flex; }
 
 #chat-text {
 	overflow-y: auto;
-	word-break: break-word;
 	margin: 5px;
+}
+
+.chat-user{
+	vertical-align: top;
+}
+
+.chat-msg{
+	word-break: break-word;
 }
 
 #chat-msg > input {

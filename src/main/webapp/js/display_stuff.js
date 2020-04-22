@@ -121,7 +121,17 @@ function display_turn(where, turn_phase) {
 
 function display_chat_msg(who, msg) {
 	let chat_text_div = $("#chat-text")
-	chat_text_div.append(who+": "+msg+"<br>");
+
+	$("#chat-text > table")
+		.append($("<tr>")
+			.append($("<td class='chat-user'>")
+				.text(who+": ")
+			)
+			.append($("<td class='chat-msg'>")
+				.text(msg)
+			)
+		);
+
 	chat_text_div.scrollTop(chat_text_div.prop("scrollHeight"));
 	if ($("#chat").is(":hidden")) $("#chat-button").addClass("chat-new-msg");
 }
