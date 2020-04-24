@@ -108,13 +108,13 @@ public class Player {
 			this.setHand(this.team.getPot()); // the setter notifies the client
 			this.game.broadcast(new Message(MsgType.POT, this.id, null));
 		} else if (willEmpty && this.team.potTaken){
-			this.team.points += 100;
+			this.team.close();
 			this.game.closeRound();
 		}
 	}
 
 	public void payHandPoints() {
-		this.team.points -= this.hand.countPoints();
+		this.team.pay(this.hand.countPoints().points);
 	}
 
 	public boolean sendMessage(Message msg) {

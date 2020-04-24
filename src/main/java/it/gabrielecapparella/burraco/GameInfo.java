@@ -1,12 +1,16 @@
 package it.gabrielecapparella.burraco;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.time.Instant;
 
 @XmlRootElement
 public class GameInfo {
+	public String id;
 	public int numPlayers;
 	public int targetPoints;
-	//public int turnTimeout;
+	//public int turnTimeout; TODO
+	public int seatsToAssign;
+	public Instant creationTime;
 
 	public GameInfo() {}
 

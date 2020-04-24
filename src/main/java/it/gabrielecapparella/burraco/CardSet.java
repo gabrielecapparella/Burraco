@@ -116,17 +116,17 @@ public class CardSet extends ArrayList<Card>{
 		return super.get(super.size()-1);
 	}
 
-	public int countPoints() {
-		int points = 0;
+	public Points countPoints() {
+		Points result = new Points();
 		for (Card c : this) {
-			points += c.points;
+			result.points += c.points;
 		}
 
-		if (this.burType==BuracoType.DIRTY) points += 100;
-		else if (this.burType==BuracoType.SEMICLEAN) points += 150;
-		else if (this.burType==BuracoType.CLEAN) points += 200;
+		if (this.burType==BuracoType.DIRTY) result.base = 100;
+		else if (this.burType==BuracoType.SEMICLEAN) result.base = 150;
+		else if (this.burType==BuracoType.CLEAN) result.base = 200;
 
-		return points;
+		return result;
 	}
 
 	private BuracoType getBurracoType() {

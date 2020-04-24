@@ -136,3 +136,7 @@ function display_chat_msg(who, msg) {
 	if ($("#chat").is(":hidden")) $("#chat-button").addClass("chat-new-msg");
 }
 
+function display_points() {
+	//TODO
+}
+

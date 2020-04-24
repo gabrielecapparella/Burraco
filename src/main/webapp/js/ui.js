@@ -44,8 +44,8 @@ class BurracoUI {
 			}
 		});
 
-		display_other_hand("west", 11);
-		display_other_hand("east", 11);
+		//display_other_hand("west", 11);
+		//display_other_hand("east", 11);
 	}
 
 	startGame() {

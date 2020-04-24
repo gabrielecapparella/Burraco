@@ -8,8 +8,8 @@ import java.util.List;
 public class Team {
 	private CardSet pot;
 	private List<CardSet> runs;
-	private List<Integer> pointsHistory = new ArrayList<>();
-	public int points; // current round
+	private List<Points> pointsHistory = new ArrayList<>(); // not used as of now
+	private Points currentPoints; // current round
 	public int totalPoints = 0;
 	public boolean potTaken;
 
@@ -17,7 +17,7 @@ public class Team {
 		this.runs = new ArrayList<>();
 		this.pot = pot;
 		this.potTaken = false;
-		this.points = 0;
+		this.currentPoints = new Points();
 	}
 
 	public boolean hasBurraco() {
@@ -55,21 +55,25 @@ public class Team {
 		}
 	}
 
-	public int countRoundPoints() {
-		for (CardSet run: this.runs) {
-			this.points += run.countPoints();
-		}
-		if (!this.potTaken) this.points -= 100;
-		this.pointsHistory.add(this.points);
-		this.totalPoints += this.points;
-		return this.totalPoints;
+	public void close() {
+		this.currentPoints.base += 100;
 	}
 
-	public String getReport() {
-		JSONObject jo = new JSONObject();
-		jo.put("history", this.pointsHistory);
-		jo.put("total", this.totalPoints);
-		return jo.toString();
+	public void pay(int p) {
+		this.currentPoints.points -= p;
+	}
+
+	public TeamRoundReport countRoundPoints() {
+		Points runPoints;
+		for (CardSet run: this.runs) {
+			runPoints = run.countPoints();
+			this.currentPoints.base += runPoints.base;
+			this.currentPoints.points += runPoints.points;
+		}
+		if (!this.potTaken) this.currentPoints.points -= 100;
+		this.pointsHistory.add(this.currentPoints);
+		this.totalPoints += this.currentPoints.points + this.currentPoints.base;
+		return new TeamRoundReport(this.currentPoints, this.totalPoints);
 	}
 
 	public CardSet getPot() {

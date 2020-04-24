@@ -1,5 +1,6 @@
 package it.gabrielecapparella.burraco;
 
+import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.time.Instant;
@@ -9,26 +10,28 @@ import java.util.List;
 import java.util.Random;
 
 
-public class Game {
+public class Game { // TODO: self destruct on END_GAME
 	private String id;
-	private Instant startTime;
+	private Instant creationTime;
 	private int targetPoints;
 	private int seatsToAssign;
-	public boolean isRunning;
 	private Team team1;
 	private Team team2;
 	private List<Player> players;
 	private List<Card> deck;
 	private CardSet discardPile;
+	public boolean isRunning;
+	private Gson gson;
 
 	public Game(String id, int targetPoints, int numPlayers) {
 		this.id = id;
-		this.startTime = Instant.now();
+		this.creationTime = Instant.now();
 		this.targetPoints = targetPoints;
 		this.seatsToAssign = numPlayers;
-		this.isRunning = false;
 		this.team1 = new Team();
 		this.team2 = new Team();
+		this.isRunning = false;
+		this.gson = new Gson();
 
 		this.players = new ArrayList<>(numPlayers);
 		this.players.add(new Player(this, team1, 0));
@@ -40,6 +43,7 @@ public class Game {
 	}
 
 	private void setupTable() {
+		this.isRunning = true;
 		this.initDeck();
 
 		this.team1.newRound(new CardSet(this.drawCards(11)));
@@ -54,8 +58,6 @@ public class Game {
 
 		int whoBegins = new Random().nextInt(this.players.size());
 		this.players.get(whoBegins).setTurn(Turn.TAKE);
-
-		this.isRunning = true;
 	}
 
 	private void initDeck() {
@@ -115,6 +117,7 @@ public class Game {
 
 	public void closeGame() {
 		this.closeRound(true);
+		this.isRunning = false;
 	}
 
 	public void closeRound() {
@@ -126,40 +129,36 @@ public class Game {
 			p.payHandPoints();
 		}
 
-		int p1 = this.team1.countRoundPoints();
-		int p2 = this.team2.countRoundPoints();
-		String winner = null;
-		if (p1>=this.targetPoints && p1>p2) {
+		TeamRoundReport report1 = this.team1.countRoundPoints();
+		TeamRoundReport report2 = this.team2.countRoundPoints();
+		String winner = "none";
+		if (report1.total>=this.targetPoints && report1.total>report2.total) {
 			winner = "team1";
-		} else if(p2>=this.targetPoints && p2>p1) {
+		} else if(report2.total>=this.targetPoints && report2.total>report1.total) {
 			winner = "team2";
 		}
 
-		JSONObject round_report = new JSONObject();
-		round_report.put("team1", this.team1.getReport());
-		round_report.put("team2", this.team2.getReport());
-		round_report.put("winner", winner);
+		RoundReport roundReport = new RoundReport(report1, report2, winner);
 
 		MsgType msg_type = MsgType.END_ROUND;
-		if(winner!=null) {
-			msg_type = MsgType.END_GAME;
-			this.isRunning = false;
-		}
-		this.broadcast(new Message(msg_type, "Game", round_report.toString()));
+		if(winner!=null) msg_type = MsgType.END_GAME;
+
+		String report_json = this.gson.toJson(roundReport);
+		this.broadcast(new Message(msg_type, "Game", report_json));
 
 		if(winner==null && !closeGame) this.setupTable();
 	}
 
 	public String getDescription() {
-		JSONObject jo = new JSONObject();
-		jo.put("id", this.id);
-		jo.put("timestamp", this.startTime);
-		jo.put("targetPoints", this.targetPoints);
-		jo.put("numPlayers", this.players.size());
-		jo.put("seatsToAssign", this.seatsToAssign);
-		jo.put("isRunning", this.isRunning);
-		// TODO: add seated players id/names
-		return jo.toString();
+		GameInfo gameInfo = new GameInfo();
+		gameInfo.id = this.id;
+		gameInfo.numPlayers = this.players.size();
+		gameInfo.targetPoints = this.targetPoints;
+		gameInfo.seatsToAssign = this.seatsToAssign;
+		gameInfo.creationTime = this.creationTime;
+		// TODO: add players id/nicknames
+
+		return this.gson.toJson(gameInfo);
 	}
 
 	public void broadcast(Message msg) {
