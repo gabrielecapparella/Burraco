@@ -8,7 +8,7 @@ div { display: flex; }
 
 #main {
 	height: 100%;
-	background-color: #115211;
+	background-color: #33691E;
 }
 
 #discard {
@@ -125,13 +125,31 @@ div { display: flex; }
 }
 
 #points {
-	background-color: white;
-	width: 250px;
-	height: 400px;
+	background-color: #DCEDC8;
+	width: 170px;
+	height: 300px;
+	padding: 5px;
 	display: none;
 	position: fixed;
 	bottom: 0;
 	left: 0;
+}
+
+#points > table {
+	border-collapse: collapse;
+}
+
+.points-separator tr {
+	height: 5px;
+}
+
+.points-border {
+	border:1px solid #025c02;
+}
+
+.points-row {
+	flex-direction: row;
+	justify-content: space-evenly;
 }
 
 #chat {

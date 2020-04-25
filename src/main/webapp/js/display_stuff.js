@@ -136,7 +136,34 @@ function display_chat_msg(who, msg) {
 	if ($("#chat").is(":hidden")) $("#chat-button").addClass("chat-new-msg");
 }
 
-function display_points() {
-	//TODO
+function display_points(report, playerId) {
+	let us, them;
+	if(playerId%2==0) {
+		us = report["team1"];
+		them = report["team2"];
+	} else {
+		us = report["team2"];
+		them = report["team1"];
+	}
+
+
+	$("<tbody class='points-round points-border'>")
+		.append($("<tr>")
+			.append($("<td>").text("base"))
+			.append($("<td>").text(us["roundPoints"]["base"]))
+			.append($("<td>").text(them["roundPoints"]["base"]))
+		)
+		.append($("<tr>")
+			.append($("<td>").text("points"))
+			.append($("<td>").text(us["roundPoints"]["points"]))
+			.append($("<td>").text(them["roundPoints"]["points"]))
+		)
+	.insertBefore("#points tfoot");
+
+	$("<tbody class='points-separator'><tr></tr></tbody>")
+		.insertBefore("#points tfoot");
+
+	$("#us-total").text(us["total"]);
+	$("#them-total").text(them["total"]);
 }
 

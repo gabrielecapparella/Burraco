@@ -155,20 +155,17 @@ class BurracoUI {
 	}
 
 	action_new_meld() {
-		console.log("new meld");
 		let to_meld = [];
 		$(".selected-card, .moving").each(function(i) {
 			to_meld.push($(this).attr("data-value"));
 		});
 		if (to_meld.length==0) return;
-		let run_ix = $(this).attr("data-index");
 		let msg = ui.create_msg("MELD", null, "-1;"+to_meld);
 		ui.webSocket.send(msg);
 		$(".moving").removeClass("moving");
 	}
 
 	action_old_meld() {
-		console.log("old meld");
 		let to_meld = [];
 		$(".selected-card, .moving").each(function(i) {
 			to_meld.push($(this).attr("data-value"));

@@ -73,9 +73,11 @@ function main(game_info) {
 				break;
 			case "END_ROUND":
 				// TODO
+				display_points(JSON.parse(msg["content"]), playerId);
 				break;
 			case "END_GAME":
 				// TODO
+				display_points(JSON.parse(msg["content"]), playerId);
 				break;
 			case "CHAT":
 				display_chat_msg(burracoUI.player2name[msg["sender"]], msg["content"]);

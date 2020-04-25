@@ -99,7 +99,7 @@ public class Game { // TODO: self destruct on END_GAME
 
 	public Card draw() {
 		List<Card> c = this.drawCards(1);
-		if (c==null) return null;
+		if (c==null) return null;// TODO
 		return c.get(0);
 	}
 
@@ -140,8 +140,8 @@ public class Game { // TODO: self destruct on END_GAME
 
 		RoundReport roundReport = new RoundReport(report1, report2, winner);
 
-		MsgType msg_type = MsgType.END_ROUND;
-		if(winner!=null) msg_type = MsgType.END_GAME;
+		MsgType msg_type = MsgType.END_GAME;
+		if(winner.equals("none")) msg_type = MsgType.END_ROUND;
 
 		String report_json = this.gson.toJson(roundReport);
 		this.broadcast(new Message(msg_type, "Game", report_json));
