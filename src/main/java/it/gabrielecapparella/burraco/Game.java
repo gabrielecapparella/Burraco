@@ -100,6 +100,7 @@ public class Game { // TODO: self destruct on END_GAME
 	public Card draw() {
 		List<Card> c = this.drawCards(1);
 		if (c==null) return null;// TODO
+		this.closeRound(); //TODO remove
 		return c.get(0);
 	}
 

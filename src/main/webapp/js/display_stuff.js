@@ -147,7 +147,7 @@ function display_points(report, playerId) {
 	}
 
 
-	$("<tbody class='points-round points-border'>")
+	$("<tbody class='points-round green-border'>")
 		.append($("<tr>")
 			.append($("<td>").text("base"))
 			.append($("<td>").text(us["roundPoints"]["base"]))
