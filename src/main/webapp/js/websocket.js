@@ -72,12 +72,12 @@ function main(game_info) {
 				if (msg["sender"]!=playerId) burracoUI.pot_taken(msg["sender"]);
 				break;
 			case "END_ROUND":
-				// TODO
 				display_points(JSON.parse(msg["content"]), playerId);
+				display_modal("Round finished", null); // TODO
 				break;
 			case "END_GAME":
-				// TODO
 				display_points(JSON.parse(msg["content"]), playerId);
+				display_modal("Game finished", null); // TODO
 				break;
 			case "CHAT":
 				display_chat_msg(burracoUI.player2name[msg["sender"]], msg["content"]);

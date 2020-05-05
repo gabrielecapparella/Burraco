@@ -2,7 +2,7 @@ const CARD_WIDTH = 77;
 const HALF_CARD_WIDTH = 20;
 
 function card(css_class, value) {
-	return '<div class='+css_class+'><img src="/cards/'+value+'.jpg" data-value="'+value+'"></div>';
+	return '<div class='+css_class+'><img src="/cards/'+value+'.png" data-value="'+value+'"></div>';
 }
 
 function display_deck(num_cards) {
@@ -165,5 +165,21 @@ function display_points(report, playerId) {
 
 	$("#us-total").text(us["total"]);
 	$("#them-total").text(them["total"]);
+}
+
+function display_modal(content, actions) {
+	if (actions==null) actions = {"Ok":close_modal};
+	$("#modal-content").html(content);
+	$("#modal-footer").html("");
+	$.each(actions, function( k, v ) {
+		$("#modal-footer").append(
+			$("<div>").addClass("modal-button green-border").text(k).on("click", v)
+		);
+	});
+	$("#modal-container").show();
+}
+
+function close_modal() {
+	$("#modal-container").hide();
 }
 

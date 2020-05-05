@@ -46,6 +46,11 @@ class BurracoUI {
 
 		//display_other_hand("west", 11);
 		//display_other_hand("east", 11);
+		let a = {
+			"Yep":function(){alert("yepped");},
+			"Nope":function(){alert("noped");}
+		}
+		display_modal("content", a);
 	}
 
 	startGame() {
@@ -60,10 +65,9 @@ class BurracoUI {
 		$("#other-runs").html("");
 		this.myRuns = [];
 		this.otherRuns = [];
-		/*		let cards = "1D,2D,3D,4D,5D,6D,7D".split(",");
-				this.display_run("0", ["0", cards, "CLEAN"]);
-				this.display_run("0", ["1", cards, "SEMICLEAN"]);
-				this.display_run("0", ["2", cards, "DIRTY"]);*/
+
+		// display_run("#my-runs", ["0", "1C,2C,3C,4C,5C,6C,7C".split(","), "NONE"]);
+		// display_run("#my-runs", ["1", "1C,1C,1C,1C".split(","), "NONE"]);
 	}
 
 	somebody_joined(who_id) {
