@@ -46,11 +46,6 @@ class BurracoUI {
 
 		//display_other_hand("west", 11);
 		//display_other_hand("east", 11);
-		let a = {
-			"Yep":function(){alert("yepped");},
-			"Nope":function(){alert("noped");}
-		}
-		display_modal("content", a);
 	}
 
 	startGame() {

@@ -2,6 +2,7 @@ package it.gabrielecapparella.burraco;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.time.Instant;
+import java.util.Map;
 
 @XmlRootElement
 public class GameInfo {
@@ -11,6 +12,7 @@ public class GameInfo {
 	//public int turnTimeout; TODO
 	public int seatsToAssign;
 	public Instant creationTime;
+	public Map<String,String> players;
 
 	public GameInfo() {}
 

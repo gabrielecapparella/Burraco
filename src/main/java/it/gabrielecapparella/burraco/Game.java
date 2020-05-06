@@ -18,6 +18,7 @@ public class Game { // TODO: self destruct on END_GAME
 	private Team team1;
 	private Team team2;
 	private List<Player> players;
+
 	private List<Card> deck;
 	private CardSet discardPile;
 	public boolean isRunning;
@@ -99,15 +100,17 @@ public class Game { // TODO: self destruct on END_GAME
 
 	public Card draw() {
 		List<Card> c = this.drawCards(1);
-		if (c==null) return null;// TODO
-		this.closeRound(); //TODO remove
 		return c.get(0);
 	}
 
 	public void discard(Player p, Card c) {
 		this.discardPile.add(c);
-		int next = (this.players.indexOf(p)+1) % this.players.size();
-		this.players.get(next).setTurn(Turn.TAKE);
+		if (this.deck.size()==2) {
+			this.closeRound();
+		} else {
+			int next = (this.players.indexOf(p) + 1) % this.players.size();
+			this.players.get(next).setTurn(Turn.TAKE);
+		}
 	}
 
 	public List<Card> pickDiscardPile() {

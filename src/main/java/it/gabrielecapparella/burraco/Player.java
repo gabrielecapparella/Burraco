@@ -100,9 +100,7 @@ public class Player {
 
 		boolean willEmpty = this.hand.size()==1;
 		this.hand.remove(c);
-		this.game.discard(this, c);
 		this.game.broadcast(new Message(MsgType.DISCARD, this.id, c.toString()));
-		this.setTurn(Turn.NOPE);
 
 		if (willEmpty && !this.team.potTaken) {
 			this.setHand(this.team.getPot()); // the setter notifies the client
@@ -111,6 +109,8 @@ public class Player {
 			this.team.close();
 			this.game.closeRound();
 		}
+		this.game.discard(this, c);
+		this.setTurn(Turn.NOPE);
 	}
 
 	public void payHandPoints() {
