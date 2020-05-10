@@ -1,16 +1,18 @@
 package it.gabrielecapparella.burraco;
 
 import org.json.JSONArray;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
-@Path("/gamerepo")
-public class GameRepo {
+@RequestMapping("/gamerepo")
+@RestController
+public class GameRepo { // TODO: port to spring
     private static Map<String, Game> id2game = new ConcurrentHashMap<>();
     private static GameRepo instance;
 
@@ -25,9 +27,9 @@ public class GameRepo {
         }
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    //@POST
+    //@Consumes(MediaType.APPLICATION_JSON)
+    //@Produces(MediaType.TEXT_PLAIN)
     public String createGame(GameInfo info) {
         // in: howManyPlayers, targetPoints, (turnTimeout)
         if (!info.validateParams()) return "nope";
@@ -38,35 +40,33 @@ public class GameRepo {
         return "/game/"+gameId;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getGames() {
-        JSONArray ja = new JSONArray();
-        for (Game game : id2game.values()) {
-            ja.put(game.getDescription());
-        }
-        return ja.toString();
-    }
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public String getGames() {
+//        JSONArray ja = new JSONArray();
+//        for (Game game : id2game.values()) {
+//            ja.put(game.getDescription());
+//        }
+//        return ja.toString();
+//    }
 
     public Game getGameById(String gameId) {
         return id2game.get(gameId);
     }
 
-    @GET
-    @Path("{gameId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getGameDescr(@PathParam("gameId") String gameId) {
+    @GetMapping("{gameId}")
+    public String getGameDescr(@PathVariable String gameId) {
         return this.getGameById(gameId).getDescription();
     }
 
-    @DELETE
-    @Path("{gameId}")
-    public Response deleteGameById(@PathParam("gameId") String gameId) {
-        Game game = id2game.get(gameId);
-        if (game==null) return Response.status(404).build();
-        game.closeGame();
-        return Response.status(200).build();
-    }
+//    @DELETE
+//    @Path("{gameId}")
+//    public Response deleteGameById(@PathParam("gameId") String gameId) {
+//        Game game = id2game.get(gameId);
+//        if (game==null) return Response.status(404).build();
+//        game.closeGame();
+//        return Response.status(200).build();
+//    }
 
     public static GameRepo getInstance() {
         if (instance == null) {

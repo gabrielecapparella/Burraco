@@ -23,7 +23,7 @@ public class PlayerWebSocket {
 	public void onOpen(@PathParam("gameId") String gameId, Session session) throws IOException {
 		System.out.println("onOpen:" + session.getId());
 
-		this.game = Games.getGameById(gameId);
+		this.game = Games.getGameById(gameId); // TODO: should probably create a dedicated object for this
 		if(this.game==null) {
 			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game doesn't exist"));
 		} else if (this.game.isRunning) {
