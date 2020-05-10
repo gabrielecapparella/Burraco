@@ -17,8 +17,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Bean
 	public ViewResolver viewResolver() {
 		InternalResourceViewResolver bean = new InternalResourceViewResolver();
-
-		//bean.setViewClass(JstlView.class);
 		bean.setPrefix("/webapp/");
 		bean.setSuffix(".html");
 
