@@ -1,5 +1,7 @@
 package it.gabrielecapparella.burraco;
 
+import it.gabrielecapparella.burraco.cards.Card;
+import it.gabrielecapparella.burraco.cards.CardSet;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

@@ -1,7 +1,12 @@
 package it.gabrielecapparella.burraco;
 
 import com.google.gson.Gson;
-import org.json.JSONObject;
+import it.gabrielecapparella.burraco.cards.Card;
+import it.gabrielecapparella.burraco.cards.CardSet;
+import it.gabrielecapparella.burraco.cards.Suits;
+import it.gabrielecapparella.burraco.websocket.Message;
+import it.gabrielecapparella.burraco.websocket.MsgType;
+import it.gabrielecapparella.burraco.websocket.PlayerWebSocket;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -76,7 +81,7 @@ public class Game { // TODO: self destruct on END_GAME
 		Collections.shuffle(this.deck);
 	}
 
-	public Player join(PlayerSession ps) {
+	public Player join(PlayerWebSocket ps) {
 		if (this.seatsToAssign==0) return null;
 		this.seatsToAssign -= 1;
 		Player justJoined = this.players.get(this.seatsToAssign);

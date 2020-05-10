@@ -1,4 +1,4 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.websocket;
 
 import com.google.gson.Gson;
 

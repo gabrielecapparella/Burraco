@@ -1,4 +1,8 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.websocket;
+
+import it.gabrielecapparella.burraco.*;
+import it.gabrielecapparella.burraco.cards.Card;
+import it.gabrielecapparella.burraco.cards.CardSet;
 
 import javax.websocket.*;
 import javax.websocket.CloseReason.CloseCodes;
@@ -9,7 +13,7 @@ import java.io.IOException;
 @ServerEndpoint(value = "/game/{gameId}",
 		decoders = MsgDecoder.class,
 		encoders = MsgEncoder.class )
-public class PlayerSession {
+public class PlayerWebSocket {
 	private static GameRepo Games = GameRepo.getInstance();
 	private Game game;
 	private Player player;

@@ -1,6 +1,4 @@
-package it.gabrielecapparella.burraco;
-
-import java.util.List;
+package it.gabrielecapparella.burraco.websocket;
 
 public class Message {
     public MsgType type;

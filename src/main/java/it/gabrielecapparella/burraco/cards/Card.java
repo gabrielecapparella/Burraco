@@ -1,4 +1,4 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.cards;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

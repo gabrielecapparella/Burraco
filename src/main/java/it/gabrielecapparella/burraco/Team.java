@@ -1,6 +1,6 @@
 package it.gabrielecapparella.burraco;
 
-import org.json.JSONObject;
+import it.gabrielecapparella.burraco.cards.CardSet;
 
 import java.util.ArrayList;
 import java.util.List;

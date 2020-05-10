@@ -1,5 +1,11 @@
 package it.gabrielecapparella.burraco;
 
+import it.gabrielecapparella.burraco.cards.Card;
+import it.gabrielecapparella.burraco.cards.CardSet;
+import it.gabrielecapparella.burraco.websocket.Message;
+import it.gabrielecapparella.burraco.websocket.MsgType;
+import it.gabrielecapparella.burraco.websocket.PlayerWebSocket;
+
 import java.util.List;
 
 public class Player {
@@ -8,7 +14,7 @@ public class Player {
 	private Team team;
 	public String id;
 	public Turn turn;
-	private PlayerSession endpoint;
+	private PlayerWebSocket endpoint;
 
 	public Player(Game game, Team team, int id) {
 		this.game = game;
@@ -122,7 +128,7 @@ public class Player {
 		return this.endpoint.send(msg);
 	}
 
-	public void setEndpoint(PlayerSession ps) {
+	public void setEndpoint(PlayerWebSocket ps) {
 		this.endpoint = ps;
 		this.sendMessage(new Message(MsgType.JOIN, "Player", this.id));
 	}

@@ -1,4 +1,6 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.cards;
+
+import it.gabrielecapparella.burraco.Points;
 
 import java.util.ArrayList;
 import java.util.Collections;

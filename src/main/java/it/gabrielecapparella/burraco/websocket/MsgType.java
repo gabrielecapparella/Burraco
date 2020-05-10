@@ -1,4 +1,4 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.websocket;
 
 public enum MsgType {
 	JOIN,

@@ -1,4 +1,4 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.cards;
 
 public enum Suits {
     D,  // diamonds
