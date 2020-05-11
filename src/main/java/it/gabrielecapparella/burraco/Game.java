@@ -158,7 +158,7 @@ public class Game { // TODO: self destruct on END_GAME
 		if(winner==null && !closeGame) this.setupTable();
 	}
 
-	public String getDescription() {
+	public GameInfo getDescription() {
 		GameInfo gameInfo = new GameInfo();
 		gameInfo.id = this.id;
 		gameInfo.numPlayers = this.players.size();
@@ -167,7 +167,7 @@ public class Game { // TODO: self destruct on END_GAME
 		gameInfo.creationTime = this.creationTime;
 		// TODO: add players id/nicknames
 
-		return this.gson.toJson(gameInfo);
+		return gameInfo;
 	}
 
 	public void broadcast(Message msg) {

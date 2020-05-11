@@ -1,10 +1,8 @@
 package it.gabrielecapparella.burraco;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.time.Instant;
 import java.util.Map;
 
-@XmlRootElement
 public class GameInfo {
 	public String id;
 	public int numPlayers;
