@@ -1,7 +1,7 @@
 
 $(function() {
 	let game_id = window.location.pathname.split("/")[2];
-	$.getJSON('/gamerepo/'+game_id, main);
+	$.getJSON('/games/'+game_id, main);
 });
 
 function main(game_info) {

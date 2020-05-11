@@ -1,4 +1,4 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

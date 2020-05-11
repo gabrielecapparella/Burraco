@@ -3,6 +3,8 @@ package it.gabrielecapparella.burraco.websocket;
 import it.gabrielecapparella.burraco.*;
 import it.gabrielecapparella.burraco.cards.Card;
 import it.gabrielecapparella.burraco.cards.CardSet;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.view.tiles3.SpringWildcardServletTilesApplicationContext;
 
 import javax.websocket.*;
 import javax.websocket.CloseReason.CloseCodes;
@@ -12,18 +14,21 @@ import java.io.IOException;
 
 @ServerEndpoint(value = "/game/{gameId}",
 		decoders = MsgDecoder.class,
-		encoders = MsgEncoder.class )
+		encoders = MsgEncoder.class)
 public class PlayerWebSocket {
-	private static GameRepo Games = GameRepo.getInstance();
+	private  Games gameRepo;
 	private Game game;
 	private Player player;
 	private Session session;
 
+	public PlayerWebSocket() {
+		this.gameRepo = SpringContext.getBean(Games.class);
+	}
+
 	@OnOpen
 	public void onOpen(@PathParam("gameId") String gameId, Session session) throws IOException {
 		System.out.println("onOpen:" + session.getId());
-
-		this.game = Games.getGameById(gameId); // TODO: should probably create a dedicated object for this
+		this.game = this.gameRepo.getGameById(gameId);
 		if(this.game==null) {
 			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game doesn't exist"));
 		} else if (this.game.isRunning) {
