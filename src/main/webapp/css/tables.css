@@ -1,0 +1,32 @@
+body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	font-family: Lato;
+}
+
+div {
+	display: flex;
+	border:1px solid black;
+}
+
+#tables {
+	margin: auto;
+	flex-direction: row;
+	justify-content: center;
+}
+
+#tables-open {
+	flex-direction: column;
+	justify-content: center;
+}
+
+.title {
+	font-size: large;
+}
+
+#tables-create {
+	flex-direction: column;
+	justify-content: center;
+}
+
