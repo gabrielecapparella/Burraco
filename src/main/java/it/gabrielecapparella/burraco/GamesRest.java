@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class GamesRest { // TODO: port to spring
+public class GamesRest {
     private Games gameRepo;
 
     @Autowired

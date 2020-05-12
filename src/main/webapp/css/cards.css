@@ -17,7 +17,7 @@
 	--other-hand-h: 20px;
 	--other-hand-half-w: 20px;
 
-	--deck-half-h: 2px;
+	--deck-half-h: 3px;
 	--discard-half-h: 5px;
 
 	--horiz-half-h: 12px;
@@ -28,6 +28,7 @@ img {
 	height: var(--card-img-h);
 	flex-shrink: 0;
 	border:1px solid black;
+	border-radius: 5px;
 	z-index: 0;
 }
 
