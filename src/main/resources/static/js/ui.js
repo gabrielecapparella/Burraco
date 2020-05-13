@@ -1,10 +1,10 @@
 let ui;
 
 class BurracoUI {
-	constructor(numPlayers, web_socket) {
+	constructor(web_socket) {
 		ui = this;
 		this.hand = [];
-		this.numPlayers = numPlayers;
+		this.numPlayers = gameInfo["numPlayers"];
 		this.cardsInOtherHands = [];
 		this.discardPile = [];
 		this.player2seat = [];

@@ -165,6 +165,7 @@ function display_points(report, playerId) {
 
 	$("#us-total").text(us["total"]);
 	$("#them-total").text(them["total"]);
+	$("#points").show();
 }
 
 function display_modal(content, actions) {

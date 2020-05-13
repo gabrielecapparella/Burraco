@@ -36,11 +36,11 @@ public class GamesRest {
 
     @PostMapping(path="/games")
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody GameInfo gInfo) { // TODO: test
+    public String create(@RequestBody GameInfo gInfo) {
         if (!gInfo.validateParams()) {
             //TODO
         }
-        this.gameRepo.createGame(gInfo);
+        return "/game/"+this.gameRepo.createGame(gInfo);
     }
 
     @DeleteMapping(path="/games/{gameId}")

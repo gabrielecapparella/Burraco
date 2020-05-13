@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<title>Burraco</title>
 	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
 	<link rel="stylesheet" type="text/css" href="/css/game.css">
 	<link rel="stylesheet" type="text/css" href="/css/cards.css">
+	<script type="text/javascript" th:inline="javascript">
+		let gameInfo = {
+			"id": [[${gameInfo.id}]],
+			"numPlayers": [[${gameInfo.numPlayers}]]
+		};
+	</script>
 	<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="/js/display_stuff.js"></script>
 	<script type="text/javascript" src="/js/ui.js"></script>

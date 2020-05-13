@@ -7,6 +7,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
 	<link rel="stylesheet" type="text/css" href="/css/tables.css">
 	<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="/js/tables.js"></script>
 </head>
 <body>
 	<div id="tables">
@@ -15,7 +16,7 @@
 			<div id="tables-table">
 				<table>
 					<thead>
-					<tr><th>Target Points</th><th>Players</th><th>Open Seats</th></tr>
+					<tr><th>Players</th><th>Target Points</th></tr>
 					</thead>
 					<tbody></tbody>
 				</table>
@@ -29,17 +30,17 @@
 			<div id="tables-form">
 				<form action="">
 					<span>Target Points:</span><br>
-					<input type="radio" id="points-a" name="targetPoints" value="505">
+					<input type="radio" id="points-a" name="targetPoints" value=505>
 					<label for="points-a">505</label><br>
-					<input type="radio" id="points-b" name="targetPoints" value="1005">
+					<input type="radio" id="points-b" name="targetPoints" value=1005>
 					<label for="points-b">1005</label><br>
-					<input type="radio" id="points-c" name="targetPoints" value="2005">
+					<input type="radio" id="points-c" name="targetPoints" value=2005>
 					<label for="points-c">2005</label><br>
 					<br>
 					<span>Number of Players:</span><br>
-					<input type="radio" id="player-a" name="numPlayers" value="2">
+					<input type="radio" id="player-a" name="numPlayers" value=2>
 					<label for="player-a">2</label><br>
-					<input type="radio" id="player-b" name="numPlayers" value="4">
+					<input type="radio" id="player-b" name="numPlayers" value=4>
 					<label for="player-b">4</label><br>
 					<br>
 					<button type="button" id="create-table">Create</button>

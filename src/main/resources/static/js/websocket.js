@@ -1,11 +1,6 @@
 
 $(function() {
-	let game_id = window.location.pathname.split("/")[2];
-	$.getJSON('/games/'+game_id, main);
-});
-
-function main(game_info) {
-	let endpoint = "ws://"+window.location.hostname+":8080/game/"+game_info["id"];
+	let endpoint = "ws://"+window.location.hostname+":8080/game/"+gameInfo["id"];
 	let playerId = -1;
 	let burracoUI = null;
 	let webSocket = new WebSocket(endpoint);
@@ -14,7 +9,7 @@ function main(game_info) {
 
 	webSocket.onopen = function(event) {
 		console.log('onopen::' + JSON.stringify(event, null, 4));
-		burracoUI = new BurracoUI(game_info["numPlayers"], webSocket);
+		burracoUI = new BurracoUI(webSocket);
 	}
 
 	webSocket.onmessage = function(event) {
@@ -70,6 +65,7 @@ function main(game_info) {
 				break;
 			case "POT":
 				if (msg["sender"]!=playerId) burracoUI.pot_taken(msg["sender"]);
+				display_chat_msg("Info", burracoUI.player2name[msg["sender"]]+" took the pot.");
 				break;
 			case "END_ROUND":
 				display_points(JSON.parse(msg["content"]), playerId);
@@ -80,7 +76,9 @@ function main(game_info) {
 				display_modal("Game finished", null); // TODO
 				break;
 			case "CHAT":
-				display_chat_msg(burracoUI.player2name[msg["sender"]], msg["content"]);
+				let name = burracoUI.player2name[msg["sender"]];
+				if (name === 'undefined') name = "Info";
+				display_chat_msg(name, msg["content"]);
 				break;
 		}
 	}
@@ -94,7 +92,7 @@ function main(game_info) {
 		console.log('onerror::' + JSON.stringify(event, null, 4));
 	}
 
-}
+});
 
 function decode_cardset(cs) {
 	cs = cs.split(";");

@@ -3,6 +3,7 @@ package it.gabrielecapparella.burraco.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -11,15 +12,21 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/game/*").setViewName("forward:/game.html");
+		//registry.addViewController("/game/*").setViewName("forward:/game.html");
 	}
 
-	@Bean
-	public ViewResolver viewResolver() {
-		InternalResourceViewResolver bean = new InternalResourceViewResolver();
-		bean.setPrefix("/webapp/");
-		bean.setSuffix(".html");
+//	@Override
+//	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//		registry.addResourceHandler("/js/**")
+//				.addResourceLocations("classpath:/resources/static/js/");
+//	}
 
-		return bean;
-	}
+//	@Bean
+//	public ViewResolver viewResolver() {
+//		InternalResourceViewResolver bean = new InternalResourceViewResolver();
+//		bean.setPrefix("/resources/templates/");
+//		bean.setSuffix(".html");
+//
+//		return bean;
+//	}
 }
