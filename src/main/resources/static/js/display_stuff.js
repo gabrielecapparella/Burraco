@@ -100,10 +100,17 @@ function display_run(where, run) {
 	return run_div;
 }
 
-function display_badge(where, username) {
+function display_badge(where, username="", avatar_url="") {
 	let badge = "#"+where+"-badge";
+
 	$(badge+" > .badge-name").html(username);
-	//TODO
+
+	// TODO: badge avatar
+	let avatar_html;
+	if (avatar_url==="") avatar_html = "";
+	else avatar_html = '<img src="'+avatar_url+'">'
+	$(badge+" > .badge-img").html(avatar_html);
+
 	$(badge).show();
 }
 

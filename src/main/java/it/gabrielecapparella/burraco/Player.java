@@ -34,7 +34,7 @@ public class Player {
 		}
 		this.hand.add(drawn);
 		this.sendMessage(new Message(MsgType.DRAW, "Player", drawn.toString()));
-		this.game.broadcast(new Message(MsgType.DRAW, "Game", this.id));
+		this.game.broadcast(new Message(MsgType.DRAW, this.id, null));
 		this.setTurn(Turn.DISCARD);
 	}
 
@@ -45,7 +45,7 @@ public class Player {
 		}
 		List<Card> picked = this.game.pickDiscardPile();
 		this.hand.addAll(picked);
-		this.game.broadcast(new Message(MsgType.PICK, "Game", this.id));
+		this.game.broadcast(new Message(MsgType.PICK, this.id, null));
 		this.setTurn(Turn.DISCARD);
 	}
 
@@ -111,7 +111,7 @@ public class Player {
 		if (willEmpty && !this.team.potTaken) {
 			this.setHand(this.team.getPot()); // the setter notifies the client
 			this.game.broadcast(new Message(MsgType.POT, this.id, null));
-		} else if (willEmpty && this.team.potTaken){
+		} else if (willEmpty){
 			this.team.close();
 			this.game.closeRound();
 		}

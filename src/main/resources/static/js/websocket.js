@@ -5,8 +5,6 @@ $(function() {
 	let burracoUI = null;
 	let webSocket = new WebSocket(endpoint);
 
-	// TODO: use game_info["seatsToAssign"] in some way
-
 	webSocket.onopen = function(event) {
 		console.log('onopen::' + JSON.stringify(event, null, 4));
 		burracoUI = new BurracoUI(webSocket);
@@ -14,16 +12,19 @@ $(function() {
 
 	webSocket.onmessage = function(event) {
 		let msg = JSON.parse(event.data);
-		let who; // TODO: msg.sender should always be a player_id, not just "Player" or "Game"
+		let who = msg["sender"];
 		console.log('onmessage::' + JSON.stringify(msg, null, 4));
 		switch (msg["type"]) {
 			case "JOIN":
-				if (msg["sender"]=="Player") {
+				if (who=="Player") {
 					playerId = parseInt(msg["content"]);
 					burracoUI.set_id(playerId);
 				} else {
-					burracoUI.somebody_joined(parseInt(msg["content"]));
+					burracoUI.somebody_joined(parseInt(who));
 				}
+				break;
+			case "EXIT":
+				burracoUI.somebody_abandoned(who);
 				break;
 			case "START_ROUND":
 				let discard = decode_cardset(msg["content"])[0];
@@ -35,37 +36,34 @@ $(function() {
 				burracoUI.set_hand(hand);
 				break;
 			case "TURN":
-				who = msg["sender"];
-				if (who==playerId) {
+				if (who===playerId) {
 					burracoUI.set_turn(msg["content"]);
 				}
 				display_turn(burracoUI.player2seat[who], msg["content"]);
 				break;
 			case "DRAW":
-				if (msg["sender"]=="Player") {
+				if (who==="Player") {
 					let card = msg["content"];
 					burracoUI.draw_card(card);
-				} else if (msg["content"]!=playerId){
-					burracoUI.other_draw_card(msg["content"]);
+				} else if (who!==playerId){
+					burracoUI.other_draw_card(who);
 				}
 				break;
 			case "PICK":
-				who = msg["content"];
 				burracoUI.pick(who);
 				break;
 			case "MELD":
-				who = msg["sender"];
 				let run = decode_run(msg["content"]);
 				burracoUI.meld_hand_remove(who, run[0], run[1]);
 				burracoUI.set_run(who, run);
 				break;
 			case "DISCARD":
 				let card = msg["content"];
-				burracoUI.discard(msg["sender"], card);
+				burracoUI.discard(who, card);
 				break;
 			case "POT":
-				if (msg["sender"]!=playerId) burracoUI.pot_taken(msg["sender"]);
-				display_chat_msg("Info", burracoUI.player2name[msg["sender"]]+" took the pot.");
+				if (who!==playerId) burracoUI.pot_taken(who);
+				display_chat_msg("Info", burracoUI.player2name[who]+" took the pot.");
 				break;
 			case "END_ROUND":
 				display_points(JSON.parse(msg["content"]), playerId);
@@ -76,7 +74,7 @@ $(function() {
 				display_modal("Game finished", null); // TODO
 				break;
 			case "CHAT":
-				let name = burracoUI.player2name[msg["sender"]];
+				let name = burracoUI.player2name[who];
 				if (name === 'undefined') name = "Info";
 				display_chat_msg(name, msg["content"]);
 				break;
@@ -85,7 +83,6 @@ $(function() {
 
 	webSocket.onclose = function(event) {
 		console.log('onclose::' + JSON.stringify(event, null, 4));
-		// TODO
 	}
 
 	webSocket.onerror = function(event) {

@@ -12,7 +12,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		//registry.addViewController("/game/*").setViewName("forward:/game.html");
+		registry.addViewController("/tables").setViewName("tables");
 	}
 
 //	@Override

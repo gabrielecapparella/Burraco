@@ -70,6 +70,12 @@ class BurracoUI {
 		display_chat_msg("Info", this.player2name[who_id]+" just joined.");
 	}
 
+	somebody_abandoned(who_id) {
+		display_badge(this.player2seat[who_id]);
+		display_chat_msg("Info", this.player2name[who_id]+" abandoned the game.");
+		$("#chat").show();
+	}
+
 	set_turn(t) {
 		switch (t) {
 			case "TAKE":

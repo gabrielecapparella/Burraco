@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class Game { // TODO: self destruct on END_GAME
+public class Game {
 	private String id;
 	private Instant creationTime;
 	private int targetPoints;
@@ -86,7 +86,7 @@ public class Game { // TODO: self destruct on END_GAME
 		this.seatsToAssign -= 1;
 		Player justJoined = this.players.get(this.seatsToAssign);
 		justJoined.setEndpoint(ps);
-		this.broadcast(new Message(MsgType.JOIN, "Game", justJoined.id));
+		this.broadcast(new Message(MsgType.JOIN, justJoined.id, null));
 		if (this.seatsToAssign==0) this.setupTable();
 		return justJoined;
 	}
@@ -124,16 +124,29 @@ public class Game { // TODO: self destruct on END_GAME
 		return picked;
 	}
 
-	public void closeGame() {
-		this.closeRound(true);
+	private void selfDestruct() {
 		this.isRunning = false;
+		// TODO: write stuff to db and remove itself from games.id2game
 	}
 
 	public void closeRound() {
 		this.closeRound(false);
 	}
 
-	private void closeRound(boolean closeGame) {
+	public void closeRound(boolean closeGame) {
+		RoundReport rr = this.computeRoundReport();
+		String report_json = this.gson.toJson(rr);
+
+		if (closeGame || !rr.winner.equals("none")) {
+			this.broadcast(new Message(MsgType.END_GAME, "Game", report_json));
+			this.selfDestruct();
+		} else {
+			this.broadcast(new Message(MsgType.END_GAME, "Game", report_json));
+			this.setupTable();
+		}
+	}
+
+	private RoundReport computeRoundReport() {
 		for (Player p: this.players) {
 			p.payHandPoints();
 		}
@@ -147,15 +160,7 @@ public class Game { // TODO: self destruct on END_GAME
 			winner = "team2";
 		}
 
-		RoundReport roundReport = new RoundReport(report1, report2, winner);
-
-		MsgType msg_type = MsgType.END_GAME;
-		if(winner.equals("none")) msg_type = MsgType.END_ROUND;
-
-		String report_json = this.gson.toJson(roundReport);
-		this.broadcast(new Message(msg_type, "Game", report_json));
-
-		if(winner==null && !closeGame) this.setupTable();
+		return new RoundReport(report1, report2, winner);
 	}
 
 	public GameInfo getDescription() {

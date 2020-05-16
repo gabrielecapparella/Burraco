@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -38,14 +39,14 @@ public class GamesRest {
     @ResponseStatus(HttpStatus.CREATED)
     public String create(@RequestBody GameInfo gInfo) {
         if (!gInfo.validateParams()) {
-            //TODO
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return "/game/"+this.gameRepo.createGame(gInfo);
     }
 
     @DeleteMapping(path="/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable String gameId) { // TODO: test
+    public void delete(@PathVariable String gameId) {
         //TODO: check things like authorization, game is running, ...
         this.gameRepo.deleteGame(gameId);
     }

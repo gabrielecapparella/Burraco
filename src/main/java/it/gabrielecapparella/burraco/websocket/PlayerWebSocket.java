@@ -61,8 +61,6 @@ public class PlayerWebSocket {
 			case CHAT:
 				this.game.broadcast(msg);
 				break;
-			case EXIT:// TODO may use onClose instead
-				break;
 		}
 	}
 
@@ -75,14 +73,17 @@ public class PlayerWebSocket {
 	}
 
 	@OnClose
-	public void onClose(Session session, CloseReason cReason) { // TODO
+	public void onClose(Session session, CloseReason cReason) {
 		// this is called when the client closes the connection
 		System.out.println("onClose::" +  session.getId());
 		System.out.println("closeReason::" +cReason.toString());
 
+		this.game.broadcast(new Message(MsgType.EXIT, this.player.id, null));
+		this.game.closeRound(true);
 	}
 
 	public boolean send(Message msg) {
+		if (!this.session.isOpen()) return false;
 		try {
 			this.session.getBasicRemote().sendObject(msg);
 			return true;
