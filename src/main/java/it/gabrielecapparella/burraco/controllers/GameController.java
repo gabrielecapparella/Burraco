@@ -1,5 +1,7 @@
-package it.gabrielecapparella.burraco;
+package it.gabrielecapparella.burraco.controllers;
 
+import it.gabrielecapparella.burraco.Game;
+import it.gabrielecapparella.burraco.Games;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

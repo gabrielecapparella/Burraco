@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<title>Burraco - tables</title>
@@ -10,6 +10,12 @@
 	<script type="text/javascript" src="/js/tables.js"></script>
 </head>
 <body>
+	<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+	<br>
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Sign Out"/>
+	</form>
+	<br>
 	<div id="tables">
 		<div id="tables-open">
 			<div class="title">Open Tables:</div>

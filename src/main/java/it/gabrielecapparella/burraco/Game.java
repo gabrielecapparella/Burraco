@@ -134,6 +134,7 @@ public class Game {
 	}
 
 	public void closeRound(boolean closeGame) {
+		if (!this.isRunning) return;
 		RoundReport rr = this.computeRoundReport();
 		String report_json = this.gson.toJson(rr);
 

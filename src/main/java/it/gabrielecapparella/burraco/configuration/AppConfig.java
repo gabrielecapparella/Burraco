@@ -5,5 +5,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("it.gabrielecapparella.burraco")
-public class AppConfig {
+public class AppConfig { // TODO: merge this and the other config class
 }
