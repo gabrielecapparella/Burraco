@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>User Profile</title>
+
+	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
+	<link rel="stylesheet" type="text/css" href="/css/user.css">
+	<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+	<div id="user-data">
+		<div>Other players can see your username and your avatar.</div>
+		<div>
+			<label>Username:</label>
+			<input id="in-username" type="text" th:value="${username}" />
+			<button id="change-username" type="button">Change</button>
+			<p id="used-username">Username already existent.</p>
+		</div>
+		<div>
+			<label>Avatar:</label>
+			<img th:src="${avatar}">
+			<input id="in-avatar" type="file" accept=".jpg">
+			<button id="change-avatar" type="button">Change</button>
+		</div>
+		<div>
+			<label>Email:</label>
+			<input id="in-email" type="text" th:value="${email}" />
+			<button id="change-email" type="button">Change</button>
+		</div>
+	</div>
+</body>
+</html>

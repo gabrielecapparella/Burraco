@@ -13,20 +13,16 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Column(unique=true)
 	private String username;
-	private String email;
-	private String password;
-	private UserRole userRole;
 
-	@Override
-	public String toString() {
-		return "User{" +
-				"id=" + id +
-				", name='" + username + '\'' +
-				", email='" + email + '\'' +
-				", userRole=" + userRole +
-				'}';
-	}
+	@Column(unique=true)
+	private String email;
+
+	@Column(unique=true)
+	private String googleId;
+
+	private UserRole userRole;
 
 	@Override
 	public boolean isAccountNonExpired() {
@@ -39,9 +35,7 @@ public class User implements UserDetails {
 	}
 
 	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+	public boolean isCredentialsNonExpired() { return true;	}
 
 	@Override
 	public boolean isEnabled() {
@@ -53,20 +47,26 @@ public class User implements UserDetails {
 		return null;
 	}
 
+	@Override
+	public String getPassword() {
+		return null;
+	}
+
 	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getUsername() {
 		return username;
 	}
 
-	public void setUsername(String name) {
-		this.username = name;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getEmail() {
@@ -77,12 +77,12 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getGoogleId() {
+		return googleId;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setGoogleId(String google_id) {
+		this.googleId = google_id;
 	}
 
 	public UserRole getUserRole() {

@@ -20,4 +20,19 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 		return this.userRepository.findByUsername(s);
 	}
+
+	public User loadUserByGoogleId(String s)  {
+		return this.userRepository.findByGoogleId(s);
+	}
+
+	public User registerUser(String email, String googleId, UserRole role) {
+		User newUser = new User();
+		String username = email.split("@")[0];
+		newUser.setUsername(username);
+		newUser.setEmail(email);
+		newUser.setGoogleId(googleId);
+		newUser.setUserRole(role);
+		this.userRepository.saveAndFlush(newUser);
+		return newUser;
+	}
 }

@@ -1,0 +1,7 @@
+#user-data {
+	flex-direction: column;
+}
+
+#used-username {
+	display: none;
+}

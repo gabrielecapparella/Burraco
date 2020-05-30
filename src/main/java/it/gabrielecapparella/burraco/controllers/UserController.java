@@ -1,41 +1,43 @@
 package it.gabrielecapparella.burraco.controllers;
 
 import it.gabrielecapparella.burraco.users.User;
-import it.gabrielecapparella.burraco.users.UserRepository;
 import it.gabrielecapparella.burraco.users.UserRole;
 import it.gabrielecapparella.burraco.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.security.Principal;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Controller
 public class UserController {
 
 	private UserService userService;
-	private UserRepository userRepository;
 
 	@Autowired
-	public UserController(UserService userService, UserRepository userRepository) {
+	public UserController(UserService userService) {
 		this.userService = userService;
-		this.userRepository = userRepository;
-		User u = new User();
-		u.setEmail("polpetta@gne.it");
-		u.setPassword("al sugo");
-		u.setUsername("polpy");
-		u.setUserRole(UserRole.USER);
-		this.userRepository.saveAndFlush(u);
 	}
 
-	@GetMapping("/user/me")
-	public Object user(Principal principal) {
-		return principal;
+	@GetMapping("/user")
+	public Object user(@AuthenticationPrincipal User user, Model model) {
+		model.addAttribute("username", user.getUsername());
+		model.addAttribute("email", user.getEmail());
+		model.addAttribute("avatar", "/avatars/"+user.getId()+".jpg");
+		return user;
 	}
 
 	@GetMapping(path="/user/{username}")
@@ -44,11 +46,38 @@ public class UserController {
 	}
 
 	@GetMapping(path="/login/oauth2/success")
-	public String changeUser() {
-		UserDetails u = this.userService.loadUserByUsername("polpy");
-		Authentication authentication = new UsernamePasswordAuthenticationToken(u, null, null);
+	public RedirectView oauthRedirect(@AuthenticationPrincipal OAuth2User principal) {
+		RedirectView redirectView;
+		String google_id = principal.getAttribute("sub");
+		User currentUser = this.userService.loadUserByGoogleId(google_id);
+		if(currentUser==null) { // new user
+			String email = principal.getAttribute("email");
+			String avatarUrl = principal.getAttribute("picture");
+			currentUser = this.userService.registerUser(email, google_id, UserRole.USER);
+
+			this.downloadAvatar(avatarUrl, currentUser.getId());
+
+			redirectView = new RedirectView("/user");
+		} else {
+			redirectView = new RedirectView("/");
+		}
+		Authentication authentication = new UsernamePasswordAuthenticationToken(currentUser, null, null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		return "index";
+		return redirectView;
+	}
+
+	private void downloadAvatar(String url, long userId) {
+		try {
+			URL urlObj = new URL(url);
+			BufferedImage img = ImageIO.read(urlObj);
+			String filename = "src/main/resources/static/avatars/"+userId+".jpg";
+			File file = new File(filename);
+			ImageIO.write(img, "jpg", file);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
