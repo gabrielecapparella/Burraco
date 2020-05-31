@@ -25,6 +25,17 @@ public class User implements UserDetails {
 	private UserRole userRole;
 
 	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", email='" + email + '\'' +
+				", googleId='" + googleId + '\'' +
+				", userRole=" + userRole +
+				'}';
+	}
+
+	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}

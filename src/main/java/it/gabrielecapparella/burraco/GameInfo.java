@@ -1,7 +1,7 @@
 package it.gabrielecapparella.burraco;
 
 import java.time.Instant;
-import java.util.Map;
+import java.util.Arrays;
 
 public class GameInfo {
 	public String id;
@@ -10,7 +10,7 @@ public class GameInfo {
 	//public int turnTimeout; TODO
 	public int seatsToAssign;
 	public Instant creationTime;
-	public Map<String,String> players;
+	public PlayerInfo[] players;
 
 	public GameInfo() {}
 
@@ -18,6 +18,26 @@ public class GameInfo {
 		if (numPlayers==0 || targetPoints==0) return false;
 		if (numPlayers!=2 && numPlayers!=4) return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "GameInfo{" +
+				"id='" + id + '\'' +
+				", numPlayers=" + numPlayers +
+				", targetPoints=" + targetPoints +
+				", seatsToAssign=" + seatsToAssign +
+				", creationTime=" + creationTime +
+				", players=" + Arrays.toString(players) +
+				'}';
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public int getNumPlayers() {
@@ -34,5 +54,29 @@ public class GameInfo {
 
 	public void setTargetPoints(int targetPoints) {
 		this.targetPoints = targetPoints;
+	}
+
+	public int getSeatsToAssign() {
+		return seatsToAssign;
+	}
+
+	public void setSeatsToAssign(int seatsToAssign) {
+		this.seatsToAssign = seatsToAssign;
+	}
+
+	public Instant getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(Instant creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public PlayerInfo[] getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(PlayerInfo[] players) {
+		this.players = players;
 	}
 }

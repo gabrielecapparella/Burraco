@@ -1,10 +1,10 @@
 package it.gabrielecapparella.burraco.controllers;
 
+import it.gabrielecapparella.burraco.users.BurracoAuthentication;
 import it.gabrielecapparella.burraco.users.User;
 import it.gabrielecapparella.burraco.users.UserRole;
 import it.gabrielecapparella.burraco.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,7 +61,7 @@ public class UserController {
 		} else {
 			redirectView = new RedirectView("/");
 		}
-		Authentication authentication = new UsernamePasswordAuthenticationToken(currentUser, null, null);
+		Authentication authentication = new BurracoAuthentication(currentUser);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		return redirectView;

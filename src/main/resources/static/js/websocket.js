@@ -20,7 +20,8 @@ $(function() {
 					playerId = parseInt(msg["content"]);
 					burracoUI.set_id(playerId);
 				} else {
-					burracoUI.somebody_joined(parseInt(who));
+					let player = JSON.parse(msg["content"]);
+					burracoUI.somebody_joined(parseInt(who), player);
 				}
 				break;
 			case "EXIT":
@@ -36,16 +37,17 @@ $(function() {
 				burracoUI.set_hand(hand);
 				break;
 			case "TURN":
-				if (who===playerId) {
+				console.log("turn, "+playerId+", "+who); // TODO: why doesn't this get executed???
+				if (who==playerId) {
 					burracoUI.set_turn(msg["content"]);
 				}
-				display_turn(burracoUI.player2seat[who], msg["content"]);
+				display_turn(burracoUI.players[who].seat, msg["content"]);
 				break;
 			case "DRAW":
-				if (who==="Player") {
+				if (who=="Player") {
 					let card = msg["content"];
 					burracoUI.draw_card(card);
-				} else if (who!==playerId){
+				} else if (who!=playerId){
 					burracoUI.other_draw_card(who);
 				}
 				break;
@@ -63,7 +65,7 @@ $(function() {
 				break;
 			case "POT":
 				if (who!==playerId) burracoUI.pot_taken(who);
-				display_chat_msg("Info", burracoUI.player2name[who]+" took the pot.");
+				display_chat_msg("Info", burracoUI.players[who].username+" took the pot.");
 				break;
 			case "END_ROUND":
 				display_points(JSON.parse(msg["content"]), playerId);
@@ -74,8 +76,8 @@ $(function() {
 				display_modal("Game finished", null); // TODO
 				break;
 			case "CHAT":
-				let name = burracoUI.player2name[who];
-				if (name === 'undefined') name = "Info";
+				let name = burracoUI.players[who].username;
+				if (name == 'undefined') name = "Info";
 				display_chat_msg(name, msg["content"]);
 				break;
 		}

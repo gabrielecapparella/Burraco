@@ -115,7 +115,7 @@ public class Player {
 			this.team.close();
 			this.game.closeRound();
 		}
-		this.game.discard(this, c);
+		this.game.discard(Integer.parseInt(this.id), c);
 		this.setTurn(Turn.NOPE);
 	}
 

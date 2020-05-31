@@ -1,22 +1,46 @@
 let ui;
 
+class Player {
+	constructor(playerInfo) {
+		this.id = null;
+		this.username = null;
+		this.cardsInHand = null;
+		this.seat = null;
+
+		if (playerInfo) this.fillInfo(playerInfo);
+	}
+
+	fillInfo(playerInfo) {
+		this.id = playerInfo.id;
+		this.username = playerInfo.username;
+	}
+}
+
 class BurracoUI {
 	constructor(web_socket) {
 		ui = this;
 		this.hand = [];
 		this.numPlayers = gameInfo["numPlayers"];
-		this.cardsInOtherHands = [];
 		this.discardPile = [];
-		this.player2seat = [];
 		this.webSocket = web_socket;
 		this.turnPhase = "NOPE";
 		this.myRuns = [];
 		this.otherRuns = [];
-		this.player2name = ["carbonara", "amatriciana", "caciopepe", "boscaiola"];
-		// TODO: populate player2name on JOIN events and initial state
 
-		$("#discard").on("mouseenter", this.discard_open)
-			.on("mouseleave", this.discard_close);
+		this.players = [];
+		gameInfo["players"].forEach(function (pInfo, i) {
+			ui.players[i] = new Player(pInfo);
+		});
+
+		this.setup_events();
+
+		//display_other_hand("west", 11);
+		//display_other_hand("east", 11);
+	}
+
+	setup_events() {
+		$("#discard").on("mouseenter", ui.discard_open)
+			.on("mouseleave", ui.discard_close);
 		$("#main").on("dragover", function(e) {e.preventDefault();})
 			.on("drop", function() {$(".moving").removeClass("moving")});
 
@@ -36,24 +60,20 @@ class BurracoUI {
 			$("#chat").hide();
 		});
 
-		$("#chat-send").on("click", this.action_send_msg);
+		$("#chat-send").on("click", ui.action_send_msg);
 
 		$( "#chat-msg > input" ).on("keypress", function( event ) {
 			if ( event.key == 'Enter' ) {
 				ui.action_send_msg();
 			}
 		});
-
-		//display_other_hand("west", 11);
-		//display_other_hand("east", 11);
 	}
 
 	startGame() {
-		this.set_deck(108-1-11*this.numPlayers, false);
-		for (let p in this.player2seat) {
-			if (p!==this.id) {
-				this.cardsInOtherHands[p] = 11;
-				this.set_other_hand(p, 11, false);
+		this.set_deck(108-1-22-11*this.numPlayers, false);
+		for (let i=0; i<this.players.length; i++) {
+			if (i!==this.id) {
+				this.set_other_hand(this.players[i], 11, false);
 			}
 		}
 		$("#my-runs").html("");
@@ -65,22 +85,26 @@ class BurracoUI {
 		// display_run("#my-runs", ["1", "1C,1C,1C,1C".split(","), "NONE"]);
 	}
 
-	somebody_joined(who_id) {
-		display_badge(this.player2seat[who_id], this.player2name[who_id]);
-		display_chat_msg("Info", this.player2name[who_id]+" just joined.");
+	somebody_joined(who_id, playerInfo) {
+		let player = this.players[who_id];
+		player.fillInfo(playerInfo);
+		display_badge(player);
+		display_chat_msg("Info", player.username+" just joined.");
 	}
 
 	somebody_abandoned(who_id) {
-		display_badge(this.player2seat[who_id]);
-		display_chat_msg("Info", this.player2name[who_id]+" abandoned the game.");
+		let player = this.players[who_id];
+		remove_badge(player);
+		display_chat_msg("Info", player.username+" abandoned the game.");
 		$("#chat").show();
 	}
 
 	set_turn(t) {
 		switch (t) {
 			case "TAKE":
-				$("#deck").on("click", this.action_draw);
-				$("#discard").on("click", this.action_pick);
+				console.log("turn take");
+				$("#deck").on("click", ui.action_draw);
+				$("#discard").on("click", ui.action_pick);
 				break;
 			case "DISCARD":
 				$("#deck").off('click');
@@ -103,17 +127,21 @@ class BurracoUI {
 
 	set_id(id) {
 		this.id = id;
-		this.player2seat[id] = "south";
+		this.players[id].seat = "south";
 		let nextId = (parseInt(id)+1)%2;
 		if (this.numPlayers==2) {
-			this.player2seat[nextId.toString()] = "north";
+			this.players[nextId.toString()].seat = "north";
 		} else { // 4 players
-			this.player2seat[nextId.toString()] = "west";
+			this.players[nextId.toString()].seat = "west";
 			nextId = (nextId+1)%2;
-			this.player2seat[nextId.toString()] = "north";
+			this.players[nextId.toString()].seat = "north";
 			nextId = (nextId+1)%2;
-			this.player2seat[nextId.toString()] = "east";
+			this.players[nextId.toString()].seat = "east";
 		}
+
+		gameInfo["players"].forEach(function (pInfo, i) {
+			if(pInfo != null) display_badge(ui.players[i]);
+		});
 	}
 
 	set_discard_pile(cards) {
@@ -155,6 +183,7 @@ class BurracoUI {
 	}
 
 	action_pick() {
+		console.log("action pick");
 		let msg = ui.create_msg("PICK", null, null);
 		ui.webSocket.send(msg);
 	}
@@ -206,7 +235,8 @@ class BurracoUI {
 	}
 
 	other_draw_card(who_id) { // other as in "other player"
-		this.set_other_hand(who_id, 1, true);
+		let player = this.players[who_id];
+		this.set_other_hand(player, 1, true);
 		this.set_deck(-1, true);
 	}
 
@@ -214,7 +244,8 @@ class BurracoUI {
 		if (who_id==this.id) {
 			this.set_hand(this.hand.concat(this.discardPile));
 		} else {
-			this.set_other_hand(who_id, this.discardPile.length, true);
+			let player = this.players[who_id];
+			this.set_other_hand(player, this.discardPile.length, true);
 		}
 		this.set_discard_pile([]);
 	}
@@ -225,7 +256,8 @@ class BurracoUI {
 		if (who_id==this.id) {
 			this.hand_remove([card]);
 		} else {
-			this.set_other_hand(who_id, -1, true);
+			let player = this.players[who_id];
+			this.set_other_hand(player, -1, true);
 		}
 	}
 
@@ -244,7 +276,8 @@ class BurracoUI {
 	}
 
 	pot_taken(who_id) {
-		this.set_other_hand(who_id, 11, false);
+		let player = this.players[who_id];
+		this.set_other_hand(player, 11, false);
 	}
 
 	discard_open() {
@@ -255,10 +288,10 @@ class BurracoUI {
 		$("#discard > .run-half").removeClass("run-half").addClass("discard-half");
 	}
 
-	set_other_hand(who_id, num, is_relative) {
-		if (is_relative) this.cardsInOtherHands[who_id] += num;
-		else this.cardsInOtherHands[who_id] = num;
-		display_other_hand(this.player2seat[who_id], this.cardsInOtherHands[who_id]);
+	set_other_hand(player, num, is_relative) {
+		if (is_relative) player.cardsInHand += num;
+		else player.cardsInHand = num;
+		display_other_hand(player);
 	}
 
 	hand_remove(to_remove) {
@@ -284,7 +317,8 @@ class BurracoUI {
 			if (ui.otherRuns.length > run_ix) {
 				to_remove = cards.length-ui.otherRuns[run_ix].length;
 			}
-			this.set_other_hand(who_id, -to_remove, true);
+			let player = this.players[who_id];
+			this.set_other_hand(player, -to_remove, true);
 		} else {
 			let cards_cp = JSON.parse(JSON.stringify(cards)) // deep copy
 			if (ui.myRuns.length > run_ix) {

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import it.gabrielecapparella.burraco.cards.Card;
 import it.gabrielecapparella.burraco.cards.CardSet;
 import it.gabrielecapparella.burraco.cards.Suits;
+import it.gabrielecapparella.burraco.users.User;
 import it.gabrielecapparella.burraco.websocket.Message;
 import it.gabrielecapparella.burraco.websocket.MsgType;
 import it.gabrielecapparella.burraco.websocket.PlayerWebSocket;
@@ -20,9 +21,10 @@ public class Game {
 	private Instant creationTime;
 	private int targetPoints;
 	private int seatsToAssign;
-	private Team team1;
-	private Team team2;
-	private List<Player> players;
+	private Team[] teams;
+
+	private Player[] players;
+	private PlayerInfo[] playersInfo;
 
 	private List<Card> deck;
 	private CardSet discardPile;
@@ -33,18 +35,19 @@ public class Game {
 		this.id = id;
 		this.creationTime = Instant.now();
 		this.targetPoints = targetPoints;
-		this.seatsToAssign = numPlayers;
-		this.team1 = new Team();
-		this.team2 = new Team();
 		this.isRunning = false;
 		this.gson = new Gson();
+		this.seatsToAssign = numPlayers;
 
-		this.players = new ArrayList<>(numPlayers);
-		this.players.add(new Player(this, team1, 0));
-		this.players.add(new Player(this, team2, 1));
-		if (numPlayers==4) {
-			this.players.add(new Player(this, team1, 2));
-			this.players.add(new Player(this, team2, 3));
+		this.teams = new Team[2];
+		this.teams[0] = new Team();
+		this.teams[1] = new Team();
+
+		this.playersInfo = new PlayerInfo[numPlayers];
+		this.players = new Player[numPlayers];
+
+		for (int i=0; i<numPlayers; i++) {
+			this.players[i] = new Player(this, this.teams[i%2], i);
 		}
 	}
 
@@ -52,8 +55,8 @@ public class Game {
 		this.isRunning = true;
 		this.initDeck();
 
-		this.team1.newRound(new CardSet(this.drawCards(11)));
-		this.team2.newRound(new CardSet(this.drawCards(11)));
+		this.teams[0].newRound(new CardSet(this.drawCards(11)));
+		this.teams[1].newRound(new CardSet(this.drawCards(11)));
 
 		for (Player p: this.players) {
 			p.setHand(new CardSet(this.drawCards(11)));
@@ -62,8 +65,8 @@ public class Game {
 		this.discardPile = new CardSet(this.drawCards(1));
 		this.broadcast(new Message(MsgType.START_ROUND, "Game", this.discardPile.toString()));
 
-		int whoBegins = new Random().nextInt(this.players.size());
-		this.players.get(whoBegins).setTurn(Turn.TAKE);
+		int whoBegins = new Random().nextInt(this.players.length);
+		this.players[whoBegins].setTurn(Turn.TAKE);
 	}
 
 	private void initDeck() {
@@ -81,12 +84,16 @@ public class Game {
 		Collections.shuffle(this.deck);
 	}
 
-	public Player join(PlayerWebSocket ps) {
+	public Player join(PlayerWebSocket ps, User user) {
 		if (this.seatsToAssign==0) return null;
 		this.seatsToAssign -= 1;
-		Player justJoined = this.players.get(this.seatsToAssign);
+
+		Player justJoined = this.players[this.seatsToAssign];
 		justJoined.setEndpoint(ps);
-		this.broadcast(new Message(MsgType.JOIN, justJoined.id, null));
+
+		PlayerInfo pInfo = new PlayerInfo(user.getId(), user.getUsername());
+		this.playersInfo[this.seatsToAssign] = pInfo;
+		this.broadcast(new Message(MsgType.JOIN, justJoined.id, this.gson.toJson(pInfo)));
 		if (this.seatsToAssign==0) this.setupTable();
 		return justJoined;
 	}
@@ -108,13 +115,13 @@ public class Game {
 		return c.get(0);
 	}
 
-	public void discard(Player p, Card c) {
+	public void discard(int playerId, Card c) {
 		this.discardPile.add(c);
 		if (this.deck.size()==2) {
 			this.closeRound();
 		} else {
-			int next = (this.players.indexOf(p) + 1) % this.players.size();
-			this.players.get(next).setTurn(Turn.TAKE);
+			int next = (playerId + 1) % this.players.length;
+			this.players[next].setTurn(Turn.TAKE);
 		}
 	}
 
@@ -152,8 +159,8 @@ public class Game {
 			p.payHandPoints();
 		}
 
-		TeamRoundReport report1 = this.team1.countRoundPoints();
-		TeamRoundReport report2 = this.team2.countRoundPoints();
+		TeamRoundReport report1 = this.teams[0].countRoundPoints();
+		TeamRoundReport report2 = this.teams[1].countRoundPoints();
 		String winner = "none";
 		if (report1.total>=this.targetPoints && report1.total>report2.total) {
 			winner = "team1";
@@ -166,12 +173,13 @@ public class Game {
 
 	public GameInfo getDescription() {
 		GameInfo gameInfo = new GameInfo();
-		gameInfo.id = this.id;
-		gameInfo.numPlayers = this.players.size();
-		gameInfo.targetPoints = this.targetPoints;
-		gameInfo.seatsToAssign = this.seatsToAssign;
-		gameInfo.creationTime = this.creationTime;
-		// TODO: add players id/nicknames
+
+		gameInfo.setId(this.id);
+		gameInfo.setNumPlayers(this.players.length);
+		gameInfo.setTargetPoints(this.targetPoints);
+		gameInfo.setSeatsToAssign(this.seatsToAssign);
+		gameInfo.setCreationTime(this.creationTime);
+		gameInfo.setPlayers(this.playersInfo);
 
 		return gameInfo;
 	}

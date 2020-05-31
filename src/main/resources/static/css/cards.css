@@ -23,7 +23,7 @@
 	--horiz-half-h: 12px;
 }
 
-img {
+.card > img{
 	width: var(--card-img-w);
 	height: var(--card-img-h);
 	flex-shrink: 0;
@@ -36,7 +36,7 @@ div {
 	overflow:hidden;
 }
 
-.card { /* deck, discard, run */
+.full-card { /* deck, discard, run */
 	width: var(--card-w);
 	height: var(--card-h);
 }

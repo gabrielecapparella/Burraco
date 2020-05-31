@@ -1,10 +1,13 @@
 package it.gabrielecapparella.burraco.websocket;
 
-import it.gabrielecapparella.burraco.*;
+import it.gabrielecapparella.burraco.Game;
+import it.gabrielecapparella.burraco.Games;
+import it.gabrielecapparella.burraco.Player;
+import it.gabrielecapparella.burraco.SpringContext;
 import it.gabrielecapparella.burraco.cards.Card;
 import it.gabrielecapparella.burraco.cards.CardSet;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.view.tiles3.SpringWildcardServletTilesApplicationContext;
+import it.gabrielecapparella.burraco.users.User;
+import org.springframework.security.core.Authentication;
 
 import javax.websocket.*;
 import javax.websocket.CloseReason.CloseCodes;
@@ -18,6 +21,7 @@ import java.io.IOException;
 public class PlayerWebSocket {
 	private  Games gameRepo;
 	private Game game;
+	private User principal;
 	private Player player;
 	private Session session;
 
@@ -27,7 +31,10 @@ public class PlayerWebSocket {
 
 	@OnOpen
 	public void onOpen(@PathParam("gameId") String gameId, Session session) throws IOException {
-		System.out.println("onOpen:" + session.getId());
+		Authentication auth = (Authentication) session.getUserPrincipal();
+		this.principal = (User) auth.getPrincipal();
+		System.out.println("onOpen: " + this.principal.getUsername());
+
 		this.game = this.gameRepo.getGameById(gameId);
 		if(this.game==null) {
 			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game doesn't exist"));
@@ -35,7 +42,7 @@ public class PlayerWebSocket {
 			session.close(new CloseReason(CloseCodes.CANNOT_ACCEPT, "Game already running"));
 		}
 		this.session = session;
-		this.player = this.game.join(this);
+		this.player = this.game.join(this, this.principal);
 	}
 
 	@OnMessage

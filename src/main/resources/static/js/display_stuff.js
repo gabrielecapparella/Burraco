@@ -2,12 +2,12 @@ const CARD_WIDTH = 77;
 const HALF_CARD_WIDTH = 20;
 
 function card(css_class, value) {
-	return '<div class='+css_class+'><img src="/cards/'+value+'.png" data-value="'+value+'"></div>';
+	return '<div class="card '+css_class+'"><img src="/cards/'+value+'.png" data-value="'+value+'"></div>';
 }
 
 function display_deck(num_cards) {
 	let to_display = Math.ceil(num_cards/5);
-	let result = card("card", "back");
+	let result = card("full-card", "back");
 	for (let i=1; i<to_display; i++) {
 		result += card("deck-half", "back");
 	}
@@ -23,7 +23,7 @@ function display_discard(cards) {
 		for (i = 0; i < discard_len-1; i++) {
 			result += card("discard-half", cards[i]);
 		}
-		result += card("card", cards[i]);
+		result += card("full-card", cards[i]);
 		discard_div.removeClass("border");
 	} else {
 		discard_div.addClass("border");
@@ -50,24 +50,24 @@ function display_hand(cards) { // TODO: check if can be merged with display_othe
 	south_div.html(hand_html);
 }
 
-function display_other_hand(where, num_cards) {
-	if (where=="north") {
+function display_other_hand(player) {
+	if (player.seat=="north") {
 		let hand = '';
-		for (let i=0; i<num_cards-1; i++) {
+		for (let i=0; i<player.cardsInHand-1; i++) {
 			hand += card("north-hand-half", "back");
 		}
 		hand += card("north-hand", "back");
 		$("#north").html(hand);
-	} else if (where=="west") {
+	} else if (player.seat=="west") {
 		let hand = '';
-		for (let i=0; i<num_cards-1; i++) {
+		for (let i=0; i<player.cardsInHand-1; i++) {
 			hand += card("west-hand-half", "back");
 		}
 		hand += card("west-hand", "back");
 		$("#west").html(hand);
-	} else if (where=="east") {
+	} else if (player.seat=="east") {
 		let hand = '';
-		for (let i=0; i<num_cards-1; i++) {
+		for (let i=0; i<player.cardsInHand-1; i++) {
 			hand += card("east-hand-half", "back");
 		}
 		hand += card("east-hand", "back");
@@ -90,7 +90,7 @@ function display_run(where, run) {
 		} else if(i==0 && (bur_type=="CLEAN" || bur_type=="DIRTY")) {
 			c_class = "run-horiz";
 		} else if(i==0 && (bur_type=="NONE" || bur_type=="SEMICLEAN")) {
-			c_class = "card";
+			c_class = "full-card";
 		} else {
 			c_class = "run-half";
 		}
@@ -100,18 +100,15 @@ function display_run(where, run) {
 	return run_div;
 }
 
-function display_badge(where, username="", avatar_url="") {
-	let badge = "#"+where+"-badge";
-
-	$(badge+" > .badge-name").html(username);
-
-	// TODO: badge avatar
-	let avatar_html;
-	if (avatar_url==="") avatar_html = "";
-	else avatar_html = '<img src="'+avatar_url+'">'
-	$(badge+" > .badge-img").html(avatar_html);
-
+function display_badge(player) {
+	let badge = "#"+player.seat+"-badge";
+	$(badge+" > .badge-name").html(player.username);
+	$(badge+" > .badge-img").html('<img src="/avatars/'+player.id+'.jpg">');
 	$(badge).show();
+}
+
+function remove_badge(player) {
+	$("#"+player.seat+"-badge > .badge-img").html(""); // simply remove the avatar
 }
 
 function display_turn(where, turn_phase) {
