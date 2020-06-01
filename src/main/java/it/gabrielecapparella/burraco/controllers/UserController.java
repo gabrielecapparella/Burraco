@@ -45,6 +45,14 @@ public class UserController {
 		return this.userService.loadUserByUsername(username).toString();
 	}
 
+	@GetMapping(path="/test/{username}")
+	public RedirectView getTestUser(@PathVariable String username) {
+		User testUser = this.userService.loadTestUser(username);
+		Authentication authentication = new BurracoAuthentication(testUser);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		return new RedirectView("/game/carbonara");
+	}
+
 	@GetMapping(path="/login/oauth2/success")
 	public RedirectView oauthRedirect(@AuthenticationPrincipal OAuth2User principal) {
 		RedirectView redirectView;

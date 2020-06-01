@@ -24,6 +24,15 @@ public class User implements UserDetails {
 
 	private UserRole userRole;
 
+	public User() {}
+
+	public User(String username, String email, String googleId, UserRole userRole) {
+		this.username = username;
+		this.email = email;
+		this.googleId = googleId;
+		this.userRole = userRole;
+	}
+
 	@Override
 	public String toString() {
 		return "User{" +

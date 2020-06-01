@@ -1,5 +1,7 @@
 package it.gabrielecapparella.burraco.users;
 
 public enum UserRole {
-	ADMIN, USER
+	ADMIN,
+	USER,
+	TEST
 }

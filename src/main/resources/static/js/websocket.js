@@ -17,7 +17,7 @@ $(function() {
 		switch (msg["type"]) {
 			case "JOIN":
 				if (who=="Player") {
-					playerId = parseInt(msg["content"]);
+					playerId = msg["content"];
 					burracoUI.set_id(playerId);
 				} else {
 					let player = JSON.parse(msg["content"]);
@@ -37,17 +37,16 @@ $(function() {
 				burracoUI.set_hand(hand);
 				break;
 			case "TURN":
-				console.log("turn, "+playerId+", "+who); // TODO: why doesn't this get executed???
-				if (who==playerId) {
+				if (who===playerId) {
 					burracoUI.set_turn(msg["content"]);
 				}
 				display_turn(burracoUI.players[who].seat, msg["content"]);
 				break;
 			case "DRAW":
-				if (who=="Player") {
+				if (who==="Player") {
 					let card = msg["content"];
 					burracoUI.draw_card(card);
-				} else if (who!=playerId){
+				} else if (who!==playerId){
 					burracoUI.other_draw_card(who);
 				}
 				break;
