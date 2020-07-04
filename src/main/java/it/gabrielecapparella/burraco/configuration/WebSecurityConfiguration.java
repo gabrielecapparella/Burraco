@@ -15,6 +15,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http
 				.authorizeRequests()
 				.antMatchers("/").permitAll()
+				.antMatchers("/test/*").permitAll() // TODO: remove before flight
 				.anyRequest().authenticated()
 				.and()
 				.oauth2Login()

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<body>
+	<header th:fragment="header">
+		<div id="header-main">
+			<div id="header-logo">Burraco</div>
+			<div id="header-spacer"></div>
+			<div id="header-index">Index</div>
+			<div id="header-tables">Tables</div>
+			<div id="header-profile">
+				<div sec:authorize="isAnonymous()" id="header-login">Login</div>
+				<div sec:authorize="isAuthenticated()" id="header-logout">Logout</div>
+				<div sec:authorize="isAuthenticated()" id="header-avatar">
+					<img th:src="${'/avatars/'+#authentication.getPrincipal().getId()+'.jpg'}">
+				</div>
+			</div>
+		</div>
+	</header>
+</body>
+</html>

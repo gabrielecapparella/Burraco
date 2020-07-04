@@ -6,10 +6,13 @@
 
 	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
 	<link rel="stylesheet" type="text/css" href="/css/tables.css">
+	<link rel="stylesheet" type="text/css" href="/css/header.css">
 	<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="/js/tables.js"></script>
 </head>
 <body>
+	<div th:replace="fragments/header :: header"></div>
+
 	<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
 	<br>
 	<form th:action="@{/logout}" method="post">
