@@ -5,12 +5,12 @@
 	--card-w: calc(var(--card-img-w) + 2px);
 	--card-h: calc(var(--card-img-h) + 2px);
 
-	--my-hand-proportion: 1.25;
+	--my-hand-proportion: 1.5;
 
 	--my-hand-w: calc(var(--card-w) * var(--my-hand-proportion));
 	--img-my-hand-w: calc(var(--card-w) * var(--my-hand-proportion));
 	--img-my-hand-h: calc(var(--card-h) * var(--my-hand-proportion));
-	--my-hand-h: 35px;
+	--my-hand-h: 38px;
 	--my-hand-half-w: 20px;
 
 	--other-hand-w: var(--card-w);

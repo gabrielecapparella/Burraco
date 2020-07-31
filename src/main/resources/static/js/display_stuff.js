@@ -1,5 +1,7 @@
-const CARD_WIDTH = 77;
+const CARD_WIDTH = 105;
 const HALF_CARD_WIDTH = 20;
+let chat_notification = new Audio('/sounds/wood.mp3');
+let turn_notification = new Audio('/sounds/bells.mp3');
 
 function card(css_class, value) {
 	return '<div class="card '+css_class+'" data-value="'+value+'"><img src="/cards/'+value+'.png"></div>';
@@ -37,8 +39,8 @@ function display_hand(cards) { // TODO: check if can be merged with display_othe
 	let south_div = $("#south");
 	let cards_len = cards.length;
 
-	if (cards_len>per_row) south_div.addClass("south-double-row");
-	else south_div.removeClass("south-double-row")
+	//if (cards_len>per_row) south_div.addClass("south-double-row");
+	//else south_div.removeClass("south-double-row")
 
 	for (let i = 0; i<cards_len; i++) {
 		if ((i+1)%per_row==0 || i==cards.length-1) {
@@ -116,6 +118,7 @@ function display_turn(where, turn_phase) {
 	switch (turn_phase) {
 		case "TAKE":
 			name_div.addClass("his-turn");
+			if (where == "south") turn_notification.play();
 			break;
 		case "NOPE":
 			name_div.removeClass("his-turn");
@@ -138,6 +141,7 @@ function display_chat_msg(who, msg) {
 
 	chat_text_div.scrollTop(chat_text_div.prop("scrollHeight"));
 	if ($("#chat").is(":hidden")) $("#chat-button").addClass("chat-new-msg");
+	if (who!="Info") chat_notification.play();
 }
 
 function display_points(report, playerId) {
