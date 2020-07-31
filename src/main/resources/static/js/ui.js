@@ -41,6 +41,7 @@ class BurracoUI {
 	setup_events() {
 		$("#discard").on("mouseenter", ui.discard_open)
 			.on("mouseleave", ui.discard_close);
+
 		$("#main").on("dragover", function(e) {e.preventDefault();})
 			.on("drop", function() {$(".moving").removeClass("moving")});
 
@@ -67,6 +68,16 @@ class BurracoUI {
 				ui.action_send_msg();
 			}
 		});
+
+		$("#south").on("click", ".card", function () {
+			console.log("click card: "+$(this).index());
+			$(this).toggleClass("selected-card").removeClass("moving")
+		})
+			.on("mousedown", ".card", function (e) {$(this).addClass("moving");})
+			.on("drop", ".card", function (e) {
+				e.preventDefault();
+				ui.move_card_hand($(this).index());
+			});
 	}
 
 	startGame() {
@@ -102,7 +113,6 @@ class BurracoUI {
 	set_turn(t) {
 		switch (t) {
 			case "TAKE":
-				console.log("turn take");
 				$("#deck").on("click", ui.action_draw);
 				$("#discard").on("click", ui.action_pick);
 				break;
@@ -158,18 +168,12 @@ class BurracoUI {
 	set_hand(hand) {
 		this.hand = hand;
 		display_hand(this.hand);
-		$("#south img").on("click", function () {$(this).toggleClass("selected-card").removeClass("moving")})
-			.on("mousedown", function (e) {$(this).addClass("moving");})
-			.on("drop", function (e) {
-				e.preventDefault();
-				ui.move_card_hand($(this).parent().index());
-			});
 	}
 
 	move_card_hand(dst) {
 		let mov = $(".moving");
 		if (mov.length==0) return;
-		let src = mov.parent().index();
+		let src = mov.index();
 		if(src!=dst) {
 			ui.hand.splice(dst, 0, ui.hand.splice(src, 1)[0]);
 		}
@@ -183,7 +187,6 @@ class BurracoUI {
 	}
 
 	action_pick() {
-		console.log("action pick");
 		let msg = ui.create_msg("PICK", null, null);
 		ui.webSocket.send(msg);
 	}
@@ -217,10 +220,10 @@ class BurracoUI {
 			card = $(".selected-card");
 			if (card.length!=1) return;
 		}
-		card = card.attr("data-value");
-		let msg = ui.create_msg("DISCARD", null, card);
+		card.addClass("to-remove");
+		card.removeClass("moving");
+		let msg = ui.create_msg("DISCARD", null, card.attr("data-value"));
 		ui.webSocket.send(msg);
-		$(".moving").removeClass("moving");
 	}
 
 	action_send_msg() {
@@ -295,12 +298,12 @@ class BurracoUI {
 	}
 
 	hand_remove(to_remove) {
-		$(".selected-card").each(function(i) {
+		$(".selected-card, .to-remove").each(function(i) {
 			let card_value = $(this).attr("data-value");
 			let pos = to_remove.indexOf(card_value);
 			if (pos>-1) {
 				to_remove.splice(pos, 1);
-				let pos_hand = ui.hand.indexOf(card_value);
+				let pos_hand = $(this).index();//ui.hand.indexOf(card_value);
 				ui.hand.splice(pos_hand, 1);
 			}
 		});

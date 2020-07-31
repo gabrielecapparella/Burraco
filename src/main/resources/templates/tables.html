@@ -13,12 +13,6 @@
 <body>
 	<div th:replace="fragments/header :: header"></div>
 
-	<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
-	<br>
-	<form th:action="@{/logout}" method="post">
-		<input type="submit" value="Sign Out"/>
-	</form>
-	<br>
 	<div id="tables">
 		<div id="tables-open">
 			<div class="title">Open Tables:</div>

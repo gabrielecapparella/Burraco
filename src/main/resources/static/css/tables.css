@@ -3,6 +3,7 @@ body {
 	padding: 0;
 	height: 100vh;
 	font-family: Lato;
+	background-color: #dcedc8;
 }
 
 div {
@@ -17,7 +18,18 @@ div {
 
 #tables-open {
 	flex-direction: column;
-	justify-content: center;
+	/*justify-content: center;*/
+	border: 1px solid #33691E;
+	padding: 10px;
+}
+
+#tables-open > table {
+	border-collapse: collapse;
+
+}
+
+#tables-open th {
+	border: 1px solid #33691E;
 }
 
 .title {
@@ -27,5 +39,8 @@ div {
 #tables-create {
 	flex-direction: column;
 	justify-content: center;
+	border: 1px solid #33691E;
+	margin: 10px;
+	padding: 10px;
 }
 

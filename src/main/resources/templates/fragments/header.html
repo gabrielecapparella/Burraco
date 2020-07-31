@@ -11,7 +11,8 @@
 				<div sec:authorize="isAnonymous()" id="header-login">Login</div>
 				<div sec:authorize="isAuthenticated()" id="header-logout">Logout</div>
 				<div sec:authorize="isAuthenticated()" id="header-avatar">
-					<img th:src="${'/avatars/'+#authentication.getPrincipal().getId()+'.jpg'}">
+					<img th:src="${'/avatars/'+#authentication.getPrincipal().getId()+'.jpg'}"
+						th:alt="${'Logged in as '+#authentication.getName()}">
 				</div>
 			</div>
 		</div>

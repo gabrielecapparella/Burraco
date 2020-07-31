@@ -2,7 +2,7 @@ const CARD_WIDTH = 77;
 const HALF_CARD_WIDTH = 20;
 
 function card(css_class, value) {
-	return '<div class="card '+css_class+'"><img src="/cards/'+value+'.png" data-value="'+value+'"></div>';
+	return '<div class="card '+css_class+'" data-value="'+value+'"><img src="/cards/'+value+'.png"></div>';
 }
 
 function display_deck(num_cards) {

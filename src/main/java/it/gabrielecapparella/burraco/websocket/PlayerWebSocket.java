@@ -15,7 +15,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
-@ServerEndpoint(value = "/game/{gameId}",
+@ServerEndpoint(value = "/ws/game/{gameId}",
 		decoders = MsgDecoder.class,
 		encoders = MsgEncoder.class)
 public class PlayerWebSocket {

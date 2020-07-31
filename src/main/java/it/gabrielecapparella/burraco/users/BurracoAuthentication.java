@@ -45,7 +45,7 @@ public class BurracoAuthentication implements Authentication {
 
 	@Override
 	public String getName() {
-		return null;
+		return this.principal.getUsername();
 	}
 
 	@Override

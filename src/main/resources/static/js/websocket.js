@@ -1,6 +1,6 @@
 
 $(function() {
-	let endpoint = "ws://"+window.location.hostname+":8080/game/"+gameInfo["id"];
+	let endpoint = "wss://"+window.location.hostname+"/ws/game/"+gameInfo["id"];
 	let playerId = -1;
 	let burracoUI = null;
 	let webSocket = new WebSocket(endpoint);
@@ -75,8 +75,9 @@ $(function() {
 				display_modal("Game finished", null); // TODO
 				break;
 			case "CHAT":
-				let name = burracoUI.players[who].username;
-				if (name == 'undefined') name = "Info";
+				let name;
+				if (who=="Player") name = "Info";
+				else name = burracoUI.players[who].username;
 				display_chat_msg(name, msg["content"]);
 				break;
 		}
