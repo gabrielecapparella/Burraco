@@ -39,12 +39,17 @@ class BurracoUI {
 	}
 
 	setup_events() {
-		$("#discard").on("mouseenter", ui.discard_open)
-			.on("mouseleave", ui.discard_close);
+		ui.setupPointsChatEvents();
+		ui.setupDeckDiscardEvents();
+		ui.setupMeldEvents();
+		ui.setupHandEvents();
 
-		$("#main").on("dragover", function(e) {e.preventDefault();})
+		$("#main")
+			.on("dragover", function(e) {e.preventDefault();})
 			.on("drop", function() {$(".moving").removeClass("moving")});
+	}
 
+	setupPointsChatEvents() {
 		$("#points-button").on("mouseenter", function() {
 			$("#points").show();
 		});
@@ -60,23 +65,98 @@ class BurracoUI {
 		$("#chat").on("mouseleave", function() {
 			$("#chat").hide();
 		});
-
-		$("#chat-send").on("click", ui.action_send_msg);
-
-		$( "#chat-msg > input" ).on("keypress", function( event ) {
+		$("#chat-send").on("click", function () {
+			let input = $("#chat-msg > input");
+			let msg = ui.create_msg("CHAT", ui.id, input.val());
+			ui.webSocket.send(msg);
+			input.val("");
+		});
+		$("#chat-msg > input" ).on("keypress", function( event ) {
 			if ( event.key == 'Enter' ) {
 				ui.action_send_msg();
 			}
 		});
+	}
 
-		$("#south").on("click", ".card", function () {
-			console.log("click card: "+$(this).index());
-			$(this).toggleClass("selected-card").removeClass("moving")
-		})
-			.on("mousedown", ".card", function (e) {$(this).addClass("moving");})
+	setupDeckDiscardEvents() {
+		$("#deck")
+			.on("click", function () {
+				if (ui.turnPhase!=="TAKE") return;
+				let msg = ui.create_msg("DRAW", null, null);
+				ui.webSocket.send(msg);
+			});
+
+		$("#discard")
+			.on("mouseenter", function () {
+				$("#discard > .discard-half").removeClass("discard-half").addClass("run-half");
+			})
+			.on("mouseleave", function () {
+				$("#discard > .run-half").removeClass("run-half").addClass("discard-half");
+			})
+			.on("click", function () {
+				if (ui.turnPhase!=="TAKE") return;
+				let msg = ui.create_msg("PICK", null, null);
+				ui.webSocket.send(msg);
+			})
+			.on("drop click", function(e) {
+				if (ui.turnPhase!=="DISCARD") return;
+				e.preventDefault();
+				let card = $(".moving");
+				if (card.length==0) {
+					card = $(".selected-card");
+					if (card.length!=1) return;
+				}
+				card.addClass("to-remove");
+				card.removeClass("moving");
+				let msg = ui.create_msg("DISCARD", null, card.attr("data-value"));
+				ui.webSocket.send(msg);
+			});
+	}
+
+	setupMeldEvents() {
+		$("#my-runs")
+			.on("drop click", function(e) {
+				if (ui.turnPhase!=="DISCARD") return;
+
+				let to_meld = [];
+				$(".moving").addClass("selected-card").removeClass("moving");
+				$(".selected-card").each(function(i) {
+					to_meld.push($(this).attr("data-value"));
+				});
+
+				if (to_meld.length==0) return;
+				if ($(e.target).is("#my-runs")) { // new run
+					let msg = ui.create_msg("MELD", null, "-1;"+to_meld);
+					ui.webSocket.send(msg);
+					$(".moving").removeClass("moving");
+				} else { // existing run
+					let run_ix = $(e.target).closest(".run").attr("data-index");
+					let msg = ui.create_msg("MELD", null, run_ix+";"+to_meld);
+					ui.webSocket.send(msg);
+				}
+			});
+	}
+
+	setupHandEvents() {
+		$("#south")
+			.on("click", ".card", function () {
+				console.log("click card: "+$(this).index());
+				$(this).toggleClass("selected-card").removeClass("moving");
+			})
+			.on("mousedown", ".card", function (e) {
+				if (e.which===1) $(this).addClass("moving");
+			})
 			.on("drop", ".card", function (e) {
 				e.preventDefault();
-				ui.move_card_hand($(this).index());
+				let dst = $(this).index();
+				let mov = $(".moving");
+				if (mov.length==0) return;
+				let src = mov.index();
+				if(src!=dst) {
+					ui.hand.splice(dst, 0, ui.hand.splice(src, 1)[0]);
+				}
+				mov.removeClass("moving");
+				ui.set_hand(ui.hand);
 			});
 	}
 
@@ -111,27 +191,6 @@ class BurracoUI {
 	}
 
 	set_turn(t) {
-		switch (t) {
-			case "TAKE":
-				$("#deck").on("click", ui.action_draw);
-				$("#discard").on("click", ui.action_pick);
-				break;
-			case "DISCARD":
-				$("#deck").off('click');
-				$("#discard").off('click').on("drop click", function(e) {
-					e.preventDefault();
-					ui.action_discard();
-				});
-				$("#my-runs").on("drop click", function(e){
-					if(e.target != this) return;
-					ui.action_new_meld();
-				});
-				break;
-			case "NOPE":
-				$("#discard").off('drop click');
-				$("#my-runs").off('click');
-				break;
-		}
 		this.turnPhase = t;
 	}
 
@@ -170,69 +229,6 @@ class BurracoUI {
 		display_hand(this.hand);
 	}
 
-	move_card_hand(dst) {
-		let mov = $(".moving");
-		if (mov.length==0) return;
-		let src = mov.index();
-		if(src!=dst) {
-			ui.hand.splice(dst, 0, ui.hand.splice(src, 1)[0]);
-		}
-		mov.removeClass("moving");
-		ui.set_hand(ui.hand);
-	}
-
-	action_draw() {
-		let msg = ui.create_msg("DRAW", null, null);
-		ui.webSocket.send(msg);
-	}
-
-	action_pick() {
-		let msg = ui.create_msg("PICK", null, null);
-		ui.webSocket.send(msg);
-	}
-
-	action_new_meld() {
-		let to_meld = [];
-		$(".selected-card, .moving").each(function(i) {
-			to_meld.push($(this).attr("data-value"));
-		});
-		if (to_meld.length==0) return;
-		let msg = ui.create_msg("MELD", null, "-1;"+to_meld);
-		ui.webSocket.send(msg);
-		$(".moving").removeClass("moving");
-	}
-
-	action_old_meld() {
-		let to_meld = [];
-		$(".selected-card, .moving").each(function(i) {
-			to_meld.push($(this).attr("data-value"));
-		});
-		if (to_meld.length==0) return;
-		let run_ix = $(this).attr("data-index");
-		let msg = ui.create_msg("MELD", null, run_ix+";"+to_meld);
-		ui.webSocket.send(msg);
-		$(".moving").removeClass("moving");
-	}
-
-	action_discard() {
-		let card = $(".moving");
-		if (card.length==0) {
-			card = $(".selected-card");
-			if (card.length!=1) return;
-		}
-		card.addClass("to-remove");
-		card.removeClass("moving");
-		let msg = ui.create_msg("DISCARD", null, card.attr("data-value"));
-		ui.webSocket.send(msg);
-	}
-
-	action_send_msg() {
-		let input = $("#chat-msg > input");
-		let msg = ui.create_msg("CHAT", ui.id, input.val());
-		ui.webSocket.send(msg);
-		input.val("");
-	}
-
 	draw_card(card) {
 		this.set_hand(this.hand.concat([card]));
 	}
@@ -265,16 +261,12 @@ class BurracoUI {
 	}
 
 	set_run(who, run) {
-		let where = "#my-runs";
-		if (Math.abs(who-this.id)==1) where = "#other-runs";
-
-		let run_div = display_run(where, run);
-
-		if (where == "#my-runs") {
-			ui.myRuns[run[0]] = run[1];
-			run_div.off("drop click").on("drop click", ui.action_old_meld);
-		} else {
+		if (Math.abs(who-this.id)==1) {
+			display_run("#other-runs", run);
 			ui.otherRuns[run[0]] = run[1];
+		} else {
+			display_run("#my-runs", run);
+			ui.myRuns[run[0]] = run[1];
 		}
 	}
 
@@ -283,13 +275,7 @@ class BurracoUI {
 		this.set_other_hand(player, 11, false);
 	}
 
-	discard_open() {
-		$("#discard > .discard-half").removeClass("discard-half").addClass("run-half");
-	}
 
-	discard_close() {
-		$("#discard > .run-half").removeClass("run-half").addClass("discard-half");
-	}
 
 	set_other_hand(player, num, is_relative) {
 		if (is_relative) player.cardsInHand += num;
@@ -303,7 +289,7 @@ class BurracoUI {
 			let pos = to_remove.indexOf(card_value);
 			if (pos>-1) {
 				to_remove.splice(pos, 1);
-				let pos_hand = $(this).index();//ui.hand.indexOf(card_value);
+				let pos_hand = ui.hand.indexOf(card_value);
 				ui.hand.splice(pos_hand, 1);
 			}
 		});
@@ -324,7 +310,7 @@ class BurracoUI {
 			this.set_other_hand(player, -to_remove, true);
 		} else {
 			let cards_cp = JSON.parse(JSON.stringify(cards)) // deep copy
-			if (ui.myRuns.length > run_ix) {
+			if (ui.myRuns.length > run_ix) { // existing run
 				ui.myRuns[run_ix].forEach(function(item) {
 					cards_cp.splice(cards_cp.indexOf(item), 1);
 				});

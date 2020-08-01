@@ -78,7 +78,7 @@ $(function() {
 				let name;
 				if (who=="Player") name = "Info";
 				else name = burracoUI.players[who].username;
-				display_chat_msg(name, msg["content"]);
+				display_chat_msg(name, msg["content"], who!==playerId);
 				break;
 		}
 	}

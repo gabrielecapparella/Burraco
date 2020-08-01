@@ -99,7 +99,7 @@ function display_run(where, run) {
 		run_html += card(c_class, cards[i]);
 	}
 	run_div.html(run_html);
-	return run_div;
+	//return run_div;
 }
 
 function display_badge(player) {
@@ -126,7 +126,7 @@ function display_turn(where, turn_phase) {
 	}
 }
 
-function display_chat_msg(who, msg) {
+function display_chat_msg(who, msg, sound) {
 	let chat_text_div = $("#chat-text")
 
 	$("#chat-text > table")
@@ -141,7 +141,7 @@ function display_chat_msg(who, msg) {
 
 	chat_text_div.scrollTop(chat_text_div.prop("scrollHeight"));
 	if ($("#chat").is(":hidden")) $("#chat-button").addClass("chat-new-msg");
-	if (who!="Info") chat_notification.play();
+	if (sound) chat_notification.play();
 }
 
 function display_points(report, playerId) {
