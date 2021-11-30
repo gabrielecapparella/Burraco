@@ -24,7 +24,7 @@ public class Game {
 	private Team[] teams;
 
 	private Player[] players;
-	private PlayerInfo[] playersInfo;
+	private User[] playersInfo;
 
 	private List<Card> deck;
 	private CardSet discardPile;
@@ -43,7 +43,7 @@ public class Game {
 		this.teams[0] = new Team();
 		this.teams[1] = new Team();
 
-		this.playersInfo = new PlayerInfo[numPlayers];
+		this.playersInfo = new User[numPlayers];
 		this.players = new Player[numPlayers];
 
 		for (int i=0; i<numPlayers; i++) {
@@ -91,9 +91,8 @@ public class Game {
 		Player justJoined = this.players[this.seatsToAssign];
 		justJoined.setEndpoint(ps);
 
-		PlayerInfo pInfo = new PlayerInfo(user.getId(), user.getUsername());
-		this.playersInfo[this.seatsToAssign] = pInfo;
-		this.broadcast(new Message(MsgType.JOIN, justJoined.id, this.gson.toJson(pInfo)));
+		this.playersInfo[this.seatsToAssign] = user;
+		this.broadcast(new Message(MsgType.JOIN, justJoined.id, this.gson.toJson(user))); // TODO
 		if (this.seatsToAssign==0) this.setupTable();
 		return justJoined;
 	}
@@ -149,7 +148,7 @@ public class Game {
 			this.broadcast(new Message(MsgType.END_GAME, "Game", report_json));
 			this.selfDestruct();
 		} else {
-			this.broadcast(new Message(MsgType.END_GAME, "Game", report_json));
+			this.broadcast(new Message(MsgType.END_ROUND, "Game", report_json));
 			this.setupTable();
 		}
 	}

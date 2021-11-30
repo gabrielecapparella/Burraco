@@ -1,91 +1,99 @@
 package it.gabrielecapparella.burraco.controllers;
 
-import it.gabrielecapparella.burraco.users.BurracoAuthentication;
-import it.gabrielecapparella.burraco.users.User;
-import it.gabrielecapparella.burraco.users.UserRole;
-import it.gabrielecapparella.burraco.users.UserService;
+import it.gabrielecapparella.burraco.exceptions.ForbiddenException;
+import it.gabrielecapparella.burraco.exceptions.UserAlreadyExistsException;
+import it.gabrielecapparella.burraco.exceptions.UserDoesNotExistsException;
+import it.gabrielecapparella.burraco.users.*;
+import it.gabrielecapparella.burraco.users.dto.UserRegistrationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 
-@Controller
+
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
-	private UserService userService;
+	private final UserService userService;
+	private final UserRepository userRepository;
 
 	@Autowired
-	public UserController(UserService userService) {
+	public UserController(UserService userService, UserRepository userRepository) {
 		this.userService = userService;
+		this.userRepository = userRepository;
 	}
 
-	@GetMapping("/user")
-	public Object user(@AuthenticationPrincipal User user, Model model) {
-		model.addAttribute("username", user.getUsername());
-		model.addAttribute("email", user.getEmail());
-		model.addAttribute("avatar", "/avatars/"+user.getId()+".jpg");
-		return user;
+	@GetMapping
+	@Secured("ADMIN")
+	public List<User> findAll() {
+		return this.userRepository.findAll();
 	}
 
-	@GetMapping(path="/user/{username}")
-	public String getUser(@PathVariable String username) {
-		return this.userService.loadUserByUsername(username).toString();
-	}
-
-	@GetMapping(path="/test/{username}")
-	public RedirectView getTestUser(@PathVariable String username) {
-		User testUser = this.userService.loadTestUser(username);
-		Authentication authentication = new BurracoAuthentication(testUser);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		return new RedirectView("/game/carbonara");
-	}
-
-	@GetMapping(path="/login/oauth2/success")
-	public RedirectView oauthRedirect(@AuthenticationPrincipal OAuth2User principal) {
-		RedirectView redirectView;
-		String google_id = principal.getAttribute("sub");
-		User currentUser = this.userService.loadUserByGoogleId(google_id);
-		if(currentUser==null) { // new user
-			String email = principal.getAttribute("email");
-			String avatarUrl = principal.getAttribute("picture");
-			currentUser = this.userService.registerUser(email, google_id, UserRole.USER);
-
-			this.downloadAvatar(avatarUrl, currentUser.getId());
-
-			redirectView = new RedirectView("/user");
+	@GetMapping("/{id}")
+	public UserRegistrationDTO findById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+		if (user.getId().equals(id)) {
+			return new UserRegistrationDTO(user);
+		} else if (user.getUserRole() == UserRole.ADMIN) {
+			Optional<User> toGet = this.userRepository.findById(id);
+			if (toGet.isPresent()) return new UserRegistrationDTO(toGet.get());
+			else throw new UserDoesNotExistsException();
 		} else {
-			redirectView = new RedirectView("/");
-		}
-		Authentication authentication = new BurracoAuthentication(currentUser);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		return redirectView;
-	}
-
-	private void downloadAvatar(String url, long userId) {
-		try {
-			URL urlObj = new URL(url);
-			BufferedImage img = ImageIO.read(urlObj);
-			String filename = "src/main/resources/static/avatars/"+userId+".jpg";
-			File file = new File(filename);
-			ImageIO.write(img, "jpg", file);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			throw new ForbiddenException();
 		}
 	}
+
+	@GetMapping("/me")
+	public UserRegistrationDTO user(@AuthenticationPrincipal User user) {
+		return this.findById(user, user.getId());
+	}
+
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public UserRegistrationDTO create(@RequestBody UserRegistrationDTO userDTO) {
+		// TODO: check for validity
+		User user = this.userService.registerUser(userDTO);
+		if (user == null) throw new UserAlreadyExistsException();
+		else return new UserRegistrationDTO(user);
+	}
+
+	@PutMapping("/{id}")
+	public UserRegistrationDTO editUser(@AuthenticationPrincipal User user, @PathVariable("id") Long id, @RequestBody UserRegistrationDTO userDTO) {
+		if (user.getId().equals(id)) {
+			return new UserRegistrationDTO(this.userService.editUser(user, userDTO));
+		} else if (user.getUserRole() == UserRole.ADMIN) {
+			Optional<User> toEdit = this.userRepository.findById(id);
+			if (toEdit.isPresent()) return new UserRegistrationDTO(this.userService.editUser(toEdit.get(), userDTO));
+			else throw new UserDoesNotExistsException();
+		} else {
+			throw new ForbiddenException();
+		}
+	}
+
+//	@GetMapping(path="/login/oauth2/success")
+//	public RedirectView oauthRedirect(@AuthenticationPrincipal OAuth2User principal) {
+//		RedirectView redirectView;
+//		String google_id = principal.getAttribute("sub");
+//		User currentUser = this.userService.loadUserByGoogleId(google_id);
+//		if(currentUser==null) { // new user
+//			String email = principal.getAttribute("email");
+//			String avatarUrl = principal.getAttribute("picture");
+//			currentUser = this.userService.registerUser(email, google_id, UserRole.USER);
+//
+//			this.downloadAvatar(avatarUrl, currentUser.getId());
+//
+//			redirectView = new RedirectView("/user");
+//		} else {
+//			redirectView = new RedirectView("/");
+//		}
+//		Authentication authentication = new BurracoAuthentication(currentUser);
+//		SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//		return redirectView;
+//	}
 }
+

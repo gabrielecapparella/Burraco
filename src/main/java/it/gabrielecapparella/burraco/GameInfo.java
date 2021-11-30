@@ -1,5 +1,7 @@
 package it.gabrielecapparella.burraco;
 
+import it.gabrielecapparella.burraco.users.User;
+
 import java.time.Instant;
 import java.util.Arrays;
 
@@ -10,7 +12,7 @@ public class GameInfo {
 	//public int turnTimeout; TODO
 	public int seatsToAssign;
 	public Instant creationTime;
-	public PlayerInfo[] players;
+	public User[] players;
 
 	public GameInfo() {}
 
@@ -72,11 +74,11 @@ public class GameInfo {
 		this.creationTime = creationTime;
 	}
 
-	public PlayerInfo[] getPlayers() {
+	public User[] getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(PlayerInfo[] players) {
+	public void setPlayers(User[] players) {
 		this.players = players;
 	}
 }
