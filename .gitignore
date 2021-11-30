@@ -4,3 +4,4 @@ lib/
 .idea/
 application.properties
 application.yml
+/tomcat/logs/

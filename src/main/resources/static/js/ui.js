@@ -66,10 +66,7 @@ class BurracoUI {
 			$("#chat").hide();
 		});
 		$("#chat-send").on("click", function () {
-			let input = $("#chat-msg > input");
-			let msg = ui.create_msg("CHAT", ui.id, input.val());
-			ui.webSocket.send(msg);
-			input.val("");
+			ui.action_send_msg();
 		});
 		$("#chat-msg > input" ).on("keypress", function( event ) {
 			if ( event.key == 'Enter' ) {
@@ -158,6 +155,13 @@ class BurracoUI {
 				mov.removeClass("moving");
 				ui.set_hand(ui.hand);
 			});
+	}
+
+	action_send_msg() {
+		let input = $("#chat-msg > input");
+		let msg = ui.create_msg("CHAT", ui.id, input.val());
+		ui.webSocket.send(msg);
+		input.val("");
 	}
 
 	startGame() {
@@ -255,8 +259,7 @@ class BurracoUI {
 		if (who_id==this.id) {
 			this.hand_remove([card]);
 		} else {
-			let player = this.players[who_id];
-			this.set_other_hand(player, -1, true);
+			this.set_other_hand(this.players[who_id], -1, true);
 		}
 	}
 
@@ -271,11 +274,8 @@ class BurracoUI {
 	}
 
 	pot_taken(who_id) {
-		let player = this.players[who_id];
-		this.set_other_hand(player, 11, false);
+		this.set_other_hand(this.players[who_id], 11, false);
 	}
-
-
 
 	set_other_hand(player, num, is_relative) {
 		if (is_relative) player.cardsInHand += num;

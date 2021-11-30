@@ -89,7 +89,7 @@ public class PlayerWebSocket {
 		this.game.closeRound(true);
 	}
 
-	public boolean send(Message msg) {
+	public synchronized boolean send(Message msg) {
 		if (!this.session.isOpen()) return false;
 		try {
 			this.session.getBasicRemote().sendObject(msg);

@@ -163,6 +163,6 @@ public class CardSet extends ArrayList<Card>{
 		for (Card c: this) {
 			result.add(c.toString());
 		}
-		return result.toString()+";"+this.burType.name();
+		return result+";"+this.burType.name();
 	}
 }

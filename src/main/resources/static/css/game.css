@@ -21,6 +21,7 @@ div { display: flex; }
 #discard {
 	min-width: 70px;
 	min-height: 104px;
+	overflow: auto;
 }
 
 .border {

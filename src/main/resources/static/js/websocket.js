@@ -1,6 +1,6 @@
 
 $(function() {
-	let endpoint = "wss://"+window.location.hostname+"/ws/game/"+gameInfo["id"];
+	let endpoint = "ws://"+window.location.hostname+":8080/ws/game/"+gameInfo["id"];
 	let playerId = -1;
 	let burracoUI = null;
 	let webSocket = new WebSocket(endpoint);
